@@ -11,8 +11,8 @@ class Reverso {
     /**
      * Checks language support.
      * @public
-     * @param {string} a first language.
-     * @param {string} b second language (if needed).
+     * @param {string} a First language.
+     * @param {string} b Second language (if needed).
      */
     langChecker(a, b) {
         let counter = 0;
@@ -35,9 +35,9 @@ class Reverso {
     /**
      * Looks for examples of using requested text in target language.
      * @public
-     * @param {string} text word or sentence that you need to know how to use in target language.
-     * @param {string} srcLang source language of the text. Available languages: English, Russian, German.
-     * @param {string} trgLang target language of examples you need. Available languages: English, Russian, German.
+     * @param {string} text Word or sentence that you need to know how to use in target language.
+     * @param {string} srcLang Source language of the text. Available languages: English, Russian, German.
+     * @param {string} trgLang Target language of examples you need. Available languages: English, Russian, German.
      */
     findContext(text, srcLang, trgLang) {
         let url = this.contextUrl + srcLang.toLowerCase() + '-' + trgLang.toLowerCase() + '/' + encodeURIComponent(text);
@@ -67,8 +67,8 @@ class Reverso {
     /**
      * Checks spelling of requested text.
      * @public
-     * @param {string} text word or sentence that you need to check.
-     * @param {string} srcLang source language of the text. Available languages: English or French.
+     * @param {string} text Word or sentence that you need to check.
+     * @param {string} srcLang Source language of the text. Available languages: English or French.
      */
     spellCheck(text, srcLang) {
         if (this.langChecker(srcLang.toLowerCase()) !== 1) {

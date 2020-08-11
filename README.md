@@ -1,6 +1,11 @@
 # (Unofficial) Reverso API
 This API allows you to find contexts and check spelling of any texts.
 
+## Installing
+```
+$ npm install reverso-api
+```
+
 ## Usage
 ```javascript
 const Reverso = require('reverso-api');
