@@ -1,9 +1,9 @@
 {
   "name": "reverso-api",
-  "version": "1.0.0",
+  "version": "1.12.0",
   "description": "Unofficial Reverso API",
   "main": "index.js",
-  "homepage": ".",
+  "homepage": "https://github.com/s0ftik3/reverso-api#readme",
   "repository": "https://github.com/s0ftik3/reverso-api.git",
   "scripts": {
     "start": "node index.js"
