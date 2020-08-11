@@ -1,0 +1,22 @@
+{
+  "name": "reverso-api",
+  "version": "1.0.0",
+  "description": "Unofficial Reverso API",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "reverso",
+    "reverso api",
+    "reverso js",
+    "context reverso",
+    "spell checker reverso"
+  ],
+  "author": "softik",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "cheerio": "^1.0.0-rc.3"
+  }
+}
