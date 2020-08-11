@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "Unofficial Reverso API",
   "main": "index.js",
+  "homepage": ".",
+  "repository": "https://github.com/s0ftik3/reverso-api.git",
   "scripts": {
     "start": "node index.js"
   },
