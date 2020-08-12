@@ -1,4 +1,5 @@
 {
     "contextUrl": "https://context.reverso.net/translation/",
-    "spellCheckUrl": "https://orthographe.reverso.net/api/v1/Spelling"
+    "spellCheckUrl": "https://orthographe.reverso.net/api/v1/Spelling",
+    "synonymsUrl": "https://synonyms.reverso.net/synonym/"
 }

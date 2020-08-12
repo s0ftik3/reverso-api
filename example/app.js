@@ -10,20 +10,29 @@
 const Reverso = require('../src/Reverso');
 const reverso = new Reverso();
 
-// Example of findContext(text, text-language, examples-language)
-reverso.findContext('meet me half way', 'English', 'German')
+// Example of context(text, text-language, examples-language)
+reverso.context('meet me half way', 'English', 'German')
     .then((response) => {
-        console.log(response);
+        return console.log(response);
     })
     .catch((error) => {
-        console.log(error);
+        return console.log(error);
     });
 
 // Example of spellCheck(text, text-language)
 reverso.spellCheck('helo', 'English')
     .then((response) => {
-        console.log(response);
+        return console.log(response);
     })
     .catch((error) => {
-        console.log(error);
+        return console.log(error);
     });
+
+// Example of synonyms(text, text-language)
+reverso.synonyms('dzień dobry', 'polish')
+    .then((response) => {
+        return console.log(response);
+    })
+    .catch((error) => {
+        return console.log(error);
+    })
