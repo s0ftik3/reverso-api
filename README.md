@@ -1,5 +1,5 @@
 # (Unofficial) Reverso API
-This API allows you to find contexts and check spelling of any texts.
+A simple wrapper around [reverso.net](https://reverso.net) API.
 
 ## Installing
 ```
@@ -23,7 +23,7 @@ reverso.findContext('meet me half way', 'English', 'German')
         console.log(error);
     });
 ```
-This method allows you to find out how to use a certain phrase in target language.
+This method provides you examples of how to use a certain phrase or a word in target language.
 In this case, the phrase is `meet me half way`, its language is `English` and the target language is `German`.
 
 _The method returns an array of objects._
@@ -39,7 +39,7 @@ reverso.spellCheck('helo', 'English')
         console.log(error);
     });
 ```
-This method allows you to find mistakes in your text.
+This method provides you your mistakes that you might make in the text.
 In this case, the text is `Helo`, its language is `English`. The response will be corrected version of the text, therefore `Hello`.
 
 _The method returns an array of objects._
