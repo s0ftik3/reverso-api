@@ -15,7 +15,7 @@ Now you're able to use all available methods.
 
 ### Find Context
 ```javascript
-reverso.findContext('meet me half way', 'English', 'German')
+reverso.context('meet me half way', 'English', 'German')
     .then((response) => {
         console.log(response);
     })
