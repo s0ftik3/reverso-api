@@ -11,7 +11,7 @@ const Reverso = require('../src/Reverso');
 const reverso = new Reverso();
 
 // Example of getContext(text, text-language, examples-language)
-reverso.getContext('meet me half way', 'English', 'as')
+reverso.getContext('meet me half way', 'English', 'German')
     .then((response) => {
         return console.log(response);
     })
