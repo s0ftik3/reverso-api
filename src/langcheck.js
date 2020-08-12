@@ -16,7 +16,11 @@ function forContext(a, b) {
             }
         }
     }
-    return counter;
+    if (counter === 2) {
+        return true;
+    } else {
+        throw new TypeError('Unsupported langauge. Supported langauges: English, Russian, German, Spanish, French, Italian, Polish.');
+    }
 }
 
 /**
@@ -33,7 +37,11 @@ function forSpellCheck(a) {
             }
         }   
     }
-    return counter;
+    if (counter === 1) {
+        return true;
+    } else {
+        throw new TypeError('Unsupported langauge. Supported langauges: English, Russian, German, Spanish, French, Italian, Polish.');
+    }
 }
 
 /**
@@ -50,7 +58,11 @@ function forSynonyms(a) {
             }
         }   
     }
-    return counter;
+    if (counter === 1) {
+        return true;
+    } else {
+        throw new TypeError('Unsupported langauge. Supported langauges: English, Russian, German, Spanish, French, Italian, Polish.');
+    }
 }
 
 module.exports = { forContext, forSpellCheck, forSynonyms };

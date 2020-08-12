@@ -16,9 +16,7 @@ class Reverso {
      * @param {string} trgLang a target language of examples you need. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
      */
     context(text, srcLang, trgLang) {
-        if (forContext(srcLang.toLowerCase(), trgLang.toLowerCase()) !== 2) {
-            throw new TypeError('Unsupported langauge. Supported langauges: English, Russian, German, Spanish, French, Italian, Polish.');
-        }
+        forContext(srcLang.toLowerCase(), trgLang.toLowerCase());
 
         let url = this.contextUrl + srcLang.toLowerCase() + '-' + trgLang.toLowerCase() + '/' + encodeURIComponent(text);
 
@@ -48,9 +46,7 @@ class Reverso {
      * @param {string} lang a source language of the text. Available languages: English or French.
      */
     spellCheck(text, lang) {
-        if (forSpellCheck(lang.toLowerCase()) !== 1) {
-            throw new TypeError('Unsupported langauge. Supported langauges: English, French.');
-        }
+        forSpellCheck(lang.toLowerCase());
         
         let resLang = {
             'english': 'eng',
@@ -84,9 +80,7 @@ class Reverso {
      * @param {string} lang a source language of the text. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
      */
     synonyms(text, lang) {
-        if (forSynonyms(lang.toLowerCase()) !== 1) {
-            throw new TypeError('Unsupported langauge. Supported langauges: English, Russian, German, Spanish, French, Italian, Polish.');
-        }
+        forSynonyms(lang.toLowerCase());
 
         let resLang = {
             'english': 'en',
