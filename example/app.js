@@ -10,8 +10,8 @@
 const Reverso = require('../src/Reverso');
 const reverso = new Reverso();
 
-// Example of context(text, text-language, examples-language)
-reverso.context('meet me half way', 'English', 'German')
+// Example of getContext(text, text-language, examples-language)
+reverso.getContext('meet me half way', 'English', 'as')
     .then((response) => {
         return console.log(response);
     })
@@ -19,8 +19,8 @@ reverso.context('meet me half way', 'English', 'German')
         return console.log(error);
     });
 
-// Example of spellCheck(text, text-language)
-reverso.spellCheck('helo', 'English')
+// Example of getSpellCheck(text, text-language)
+reverso.getSpellCheck('helo', 'English')
     .then((response) => {
         return console.log(response);
     })
@@ -28,8 +28,8 @@ reverso.spellCheck('helo', 'English')
         return console.log(error);
     });
 
-// Example of synonyms(text, text-language)
-reverso.synonyms('dzień dobry', 'polish')
+// Example of getSynonyms(text, text-language)
+reverso.getSynonyms('dzień dobry', 'Polish')
     .then((response) => {
         return console.log(response);
     })

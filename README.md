@@ -15,12 +15,12 @@ Now you're able to use all available methods.
 
 ### Find Context
 ```javascript
-reverso.context('meet me half way', 'English', 'German')
+reverso.getContext('meet me half way', 'English', 'as')
     .then((response) => {
-        console.log(response);
+        return console.log(response);
     })
     .catch((error) => {
-        console.log(error);
+        return console.log(error);
     });
 ```
 This method provides you examples of how to use a certain phrase or a word in target language.
@@ -31,12 +31,12 @@ _Available languages for this method: English, Russian, German, Spanish, French,
 
 ### Spell Check
 ```javascript
-reverso.spellCheck('helo', 'English')
+reverso.getSpellCheck('helo', 'English')
     .then((response) => {
-        console.log(response);
+        return console.log(response);
     })
     .catch((error) => {
-        console.log(error);
+        return console.log(error);
     });
 ```
 This method provides you your mistakes that you might make in the text.
@@ -47,7 +47,7 @@ _Available languages for this method: English and French._
 
 ### Synonyms
 ```javascript
-reverso.synonyms('dzień dobry', 'polish')
+reverso.getSynonyms('dzień dobry', 'Polish')
     .then((response) => {
         return console.log(response);
     })

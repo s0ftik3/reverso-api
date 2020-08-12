@@ -7,7 +7,7 @@ const spellLangs = require('./langs/spell');
  * @param {string} a First language.
  * @param {string} b Second language.
  */
-function forContext(a, b) {
+function checkContextLang(a, b) {
     let counter = 0;
     if (a && b) {
         for (let i = 0; i < contextLangs.length; i++) {
@@ -19,7 +19,7 @@ function forContext(a, b) {
     if (counter === 2) {
         return true;
     } else {
-        throw new TypeError('Unsupported langauge. Supported langauges: English, Russian, German, Spanish, French, Italian, Polish.');
+        return console.error('\ngetContext: Unsupported langauge. Supported langauges: English, Russian, German, Spanish, French, Italian, Polish.\n');
     }
 }
 
@@ -28,7 +28,7 @@ function forContext(a, b) {
  * @public
  * @param {string} a First language.
  */
-function forSpellCheck(a) {
+function checkSpellLang(a) {
     let counter = 0;
     if (a) {
         for (let i = 0; i < spellLangs.length; i++) {
@@ -40,7 +40,7 @@ function forSpellCheck(a) {
     if (counter === 1) {
         return true;
     } else {
-        throw new TypeError('Unsupported langauge. Supported langauges: English, Russian, German, Spanish, French, Italian, Polish.');
+        return console.error('\ngetSpellCheck: Unsupported langauge. Supported langauges: English and French.\n');
     }
 }
 
@@ -49,7 +49,7 @@ function forSpellCheck(a) {
  * @public
  * @param {string} a First language.
  */
-function forSynonyms(a) {
+function checkSynonymsLang(a) {
     let counter = 0;
     if (a) {
         for (let i = 0; i < contextLangs.length; i++) {
@@ -61,8 +61,8 @@ function forSynonyms(a) {
     if (counter === 1) {
         return true;
     } else {
-        throw new TypeError('Unsupported langauge. Supported langauges: English, Russian, German, Spanish, French, Italian, Polish.');
+        return console.error('\ngetSynonyms: Unsupported langauge. Supported langauges: English, Russian, German, Spanish, French, Italian, Polish.\n');
     }
 }
 
-module.exports = { forContext, forSpellCheck, forSynonyms };
+module.exports = { checkContextLang, checkSpellLang, checkSynonymsLang };

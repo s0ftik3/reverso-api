@@ -1,13 +1,9 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const urls = require('./urls'); 
-const { forContext, forSpellCheck, forSynonyms } = require('./langcheck');
+const { checkContextLang, checkSpellLang, checkSynonymsLang } = require('./langcheck');
 
 class Reverso {
-    contextUrl = urls.contextUrl;
-    spellCheckUrl = urls.spellCheckUrl;
-    synonymsUrl = urls.synonymsUrl;
-
     /**
      * Looks for examples of using requested text in target language.
      * @public
@@ -15,10 +11,10 @@ class Reverso {
      * @param {string} srcLang a source language of the text. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
      * @param {string} trgLang a target language of examples you need. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
      */
-    context(text, srcLang, trgLang) {
-        forContext(srcLang.toLowerCase(), trgLang.toLowerCase());
+    getContext(text, srcLang, trgLang) {
+        checkContextLang(srcLang.toLowerCase(), trgLang.toLowerCase());
 
-        let url = this.contextUrl + srcLang.toLowerCase() + '-' + trgLang.toLowerCase() + '/' + encodeURIComponent(text);
+        let url = urls.contextUrl + srcLang.toLowerCase() + '-' + trgLang.toLowerCase() + '/' + encodeURIComponent(text);
 
         return axios.get(url).then((response) => {
             const $ = cheerio.load(response.data);
@@ -43,17 +39,17 @@ class Reverso {
      * Checks spelling of requested text.
      * @public
      * @param {string} text a word or sentence that you need to check.
-     * @param {string} lang a source language of the text. Available languages: English or French.
+     * @param {string} lang a source language of the text. Available languages: English and French.
      */
-    spellCheck(text, lang) {
-        forSpellCheck(lang.toLowerCase());
+    getSpellCheck(text, lang) {
+        checkSpellLang(lang.toLowerCase());
         
         let resLang = {
             'english': 'eng',
             'french': 'fra'
         };
 
-        let url = this.spellCheckUrl + `?text=${encodeURIComponent(text)}&language=${resLang[lang.toLowerCase()]}&getCorrectionDetails=true`;
+        let url = urls.spellCheckUrl + `?text=${encodeURIComponent(text)}&language=${resLang[lang.toLowerCase()]}&getCorrectionDetails=true`;
 
         return axios.get(url).then((response) => {
             let data = response.data;
@@ -79,8 +75,8 @@ class Reverso {
      * @param {string} text a word or phrase that you need to check.
      * @param {string} lang a source language of the text. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
      */
-    synonyms(text, lang) {
-        forSynonyms(lang.toLowerCase());
+    getSynonyms(text, lang) {
+        checkSynonymsLang(lang.toLowerCase());
 
         let resLang = {
             'english': 'en',
@@ -92,14 +88,14 @@ class Reverso {
             'spanish': 'es'
         };
 
-        let url = this.synonymsUrl + `${resLang[lang.toLowerCase()]}/${encodeURIComponent(text)}`;
+        let url = urls.synonymsUrl + `${resLang[lang.toLowerCase()]}/${encodeURIComponent(text)}`;
 
         return axios.get(url).then((response) => {
             const $ = cheerio.load(response.data);
             const result = [];
 
             // thanks to https://stackoverflow.com/questions/32655076/cheerio-jquery-selectors-how-to-get-a-list-of-elements-in-nested-divs
-            let synonyms = $('body').find('button[class="copy-to-clipboard icon copy-for-context cursor-pointer"]').each((i, e) => {
+            $('body').find('button[class="copy-to-clipboard icon copy-for-context cursor-pointer"]').each((i, e) => {
                 result.push({
                     id: i,
                     synonym: $(e).attr('data-word')
