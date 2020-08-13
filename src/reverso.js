@@ -32,7 +32,7 @@ class Reverso {
             }
 
             return result;
-        }).catch((error) => { console.log(error) });
+        }).catch((error) => { console.error('\nError: reverso.net did not respond or there are no context examples for the given text.\n') });
     }
 
     /**
@@ -66,7 +66,7 @@ class Reverso {
             }
 
             return result;
-        }).catch((error) => { console.log(error) });
+        }).catch((error) => { console.error('\nError: reverso.net did not respond or your text has no mistakes.\n') });
     }
 
     /**
@@ -103,7 +103,7 @@ class Reverso {
             });
 
             return result;
-        }).catch((error) => { console.log(error) });
+        }).catch((error) => { console.error('\nError: reverso.net did not respond or there are no synonyms for the given text.\n') });
     }
 }
 
