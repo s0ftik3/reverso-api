@@ -13,7 +13,7 @@ const reverso = new Reverso();
 ```
 Now you're able to use all available methods.
 
-### Find Context
+### `getContext`
 ```javascript
 reverso.getContext('meet me half way', 'English', 'German')
     .then((response) => {
@@ -29,7 +29,7 @@ In this case, the phrase is `meet me half way`, its language is `English` and th
 _The method returns an array of objects._
 _Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
 
-### Spell Check
+### `getSpellCheck`
 ```javascript
 reverso.getSpellCheck('helo', 'English')
     .then((response) => {
@@ -45,7 +45,7 @@ In this case, the text is `Helo`, its language is `English`. The response will b
 _The method returns an array of objects._
 _Available languages for this method: English and French._
 
-### Synonyms
+### `getSynonyms`
 ```javascript
 reverso.getSynonyms('dzień dobry', 'Polish')
     .then((response) => {
