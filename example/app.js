@@ -19,20 +19,20 @@ reverso.getContext('meet me half way', 'English', 'Russian')
         return console.log(error);
     });
 
-// // Example of getSpellCheck(text, text-language)
-// reverso.getSpellCheck('helo', 'English')
-//     .then((response) => {
-//         return console.log(response);
-//     })
-//     .catch((error) => {
-//         return console.log(error);
-//     });
+// Example of getSpellCheck(text, text-language)
+reverso.getSpellCheck('helo', 'English')
+    .then((response) => {
+        return console.log(response);
+    })
+    .catch((error) => {
+        return console.log(error);
+    });
 
-// // Example of getSynonyms(text, text-language)
-// reverso.getSynonyms('dzień dobry', 'Polish')
-//     .then((response) => {
-//         return console.log(response);
-//     })
-//     .catch((error) => {
-//         return console.log(error);
-//     })
+// Example of getSynonyms(text, text-language)
+reverso.getSynonyms('dzień dobry', 'Polish')
+    .then((response) => {
+        return console.log(response);
+    })
+    .catch((error) => {
+        return console.log(error);
+    })
