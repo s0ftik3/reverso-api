@@ -4,35 +4,51 @@ const urls = require('./urls');
 const { checkContextLang, checkSpellLang, checkSynonymsLang } = require('./langcheck');
 
 class Reverso {
+
     /**
      * Looks for examples of using requested text in target language.
      * @public
      * @param {string} text a word or sentence that you need to know how to use in target language.
-     * @param {string} srcLang a source language of the text. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
-     * @param {string} trgLang a target language of examples you need. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
+     * @param {string} from a source language of the text. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
+     * @param {string} to a target language of examples you need. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
      */
-    getContext(text, srcLang, trgLang) {
-        checkContextLang(srcLang.toLowerCase(), trgLang.toLowerCase());
+    getContext(text, from, to) {
+        checkContextLang(from.toLowerCase(), to.toLowerCase());
 
-        let url = urls.contextUrl + srcLang.toLowerCase() + '-' + trgLang.toLowerCase() + '/' + encodeURIComponent(text);
+        let url = urls.contextUrl + from.toLowerCase() + '-' + to.toLowerCase() + '/' + encodeURIComponent(text);
 
-        return axios.get(url).then((response) => {
+        return axios(url).then((response) => {
             const $ = cheerio.load(response.data);
-            let result = [];
+            let examples = [];
+            let translation = [];
 
-            let srcLangExample = $('body').find('.example').find('div[class="src ltr"] > span[class="text"]').text().trim().split('\n');
-            let trgLangExample = $('body').find('.example').find('div[class="trg ltr"] > span[class="text"]').text().trim().split('\n');
+            let fromExample = $('body').find('.example').find('div[class="src ltr"] > span[class="text"]').text().trim().split('\n');
+            let toExample = $('body').find('.example').find('div[class="trg ltr"] > span[class="text"]').text().trim().split('\n');
+            let toTranslation = $('body').find('div[id="translations-content"]').text().split('\n');
 
-            for (let i = 0; i < srcLangExample.length; i++) {
-                result.push({
+            for (let i = 0; i < fromExample.length; i++) {
+                examples.push({
                     id: i,
-                    srcLang: srcLangExample[i].trimStart(),
-                    trgLang: trgLangExample[i].trimStart()
+                    from: fromExample[i].trimStart(),
+                    to: toExample[i].trimStart()
                 });
             }
 
-            return result;
-        }).catch((error) => { console.error('\nError: reverso.net did not respond or there are no context examples for the given text.\n') });
+            toTranslation.forEach(e => {
+                let string = e.trim();
+                if (string.length <= 0) return;
+                translation.push(e.trim());
+            });
+
+            return {
+                text: text,
+                from: from,
+                to: to,
+                translation: translation,
+                examples: examples
+            };
+
+        }).catch(() => { throw new Error('reverso.net did not respond or there are no context examples for the given text.') });
     }
 
     /**
@@ -66,7 +82,7 @@ class Reverso {
             }
 
             return result;
-        }).catch((error) => { console.error('\nError: reverso.net did not respond or your text has no mistakes.\n') });
+        }).catch(() => { throw new Error('reverso.net did not respond or your text has no mistakes.') });
     }
 
     /**
@@ -103,8 +119,9 @@ class Reverso {
             });
 
             return result;
-        }).catch((error) => { console.error('\nError: reverso.net did not respond or there are no synonyms for the given text.\n') });
+        }).catch(() => { throw new Error('reverso.net did not respond or there are no synonyms for the given text.') });
     }
+
 }
 
 module.exports = Reverso;
