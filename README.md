@@ -1,5 +1,5 @@
 # (Unofficial) Reverso API
-A simple wrapper around [reverso.net](https://reverso.net) API.
+A simple wrapper around [reverso.net](https://reverso.net).
 
 ## Installing
 ```
@@ -11,54 +11,55 @@ $ npm install reverso-api
 const Reverso = require('reverso-api');
 const reverso = new Reverso();
 ```
-Now you're able to use all available methods.
+Congrats! You can use all the methods now.\
+Let's read through the README and find out how it works.
 
 ### `getContext`
 ```javascript
-reverso.getContext('meet me half way', 'English', 'German')
-    .then((response) => {
-        return console.log(response);
-    })
-    .catch((error) => {
-        return console.log(error);
-    });
+reverso.getContext('meet me half way', 'English', 'Russian').then(response => {
+    return console.log(response);
+}).catch(err => {
+    return console.error(err);
+});
 ```
 This method provides you examples of how to use a certain phrase or a word in target language.
 In this case, the phrase is `meet me half way`, its language is `English` and the target language is `German`.
 
-_The method returns an array of objects._
+![getContext output preview](https://lh4.googleusercontent.com/YZW_NDQI2byxdKARF2X2gUfhC-eWqzIw8uV4YjYeSolfxbz-FCchYNSpXD6XWox_J5_vN7WozziiMTS9M7TX=w1857-h1008-rw)
+
+_The method returns an object that contains given text, its language, examples' language, text's translation and examples of usage._
 _Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
 
 ### `getSpellCheck`
 ```javascript
-reverso.getSpellCheck('helo', 'English')
-    .then((response) => {
-        return console.log(response);
-    })
-    .catch((error) => {
-        return console.log(error);
-    });
+reverso.getSpellCheck('helo', 'English').then(response => {
+    return console.log(response);
+}).catch(err => {
+    return console.error(err);
+});
 ```
 This method provides you your mistakes that you might make in the text.
 In this case, the text is `Helo`, its language is `English`. The response will be corrected version of the text, therefore `Hello`.
+
+![getSpellCheck output preview](https://lh6.googleusercontent.com/w8R_gbKxBMwh2GaWIC2_4AHAyukAzkUqRyzEnZG4YWc9kpD1JGWwnYjASnEScl-esYLfoEdXTePIuADUydrd=w1857-h1008)
 
 _The method returns an array of objects._
 _Available languages for this method: English and French._
 
 ### `getSynonyms`
 ```javascript
-reverso.getSynonyms('dzień dobry', 'Polish')
-    .then((response) => {
-        return console.log(response);
-    })
-    .catch((error) => {
-        return console.log(error);
-    })
+reverso.getSynonyms('dzień dobry', 'Polish').then(response => {
+    return console.log(response);
+}).catch(err => {
+    return console.error(err);
+});
 ```
-This method provides you synonyms of a word or phrase.
+This method provides you synonyms of word/phrase/sentence.
 In this case, the text is `dzień dobry`, its language is `Polish`.
 
-_The method returns an array of objects._
+![getSynonyms output preview](https://lh4.googleusercontent.com/AKpnZPtYzq_pq8UuVqejqtjMg3G6CZUbQsZ4DdndPQT-bCPVVgMGpnbYA2e0GFvygrmDMrzqHhlI7JlvQZsj=w1857-h1008)
+
+_The method returns an object that contains given text, its language and array of found synonyms._
 _Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
 
 ### Info
