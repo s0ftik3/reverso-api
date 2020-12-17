@@ -6,14 +6,15 @@ const { checkContextLang, checkSpellLang, checkSynonymsLang } = require('./langc
 class Reverso {
 
     /**
-     * Looks for examples of using requested text in target language.
+     * Retrieves information about target text as its translation, usage examples.
+     * Tests have shown that the method's average latency is ~1.3sec.
      * @public
-     * @param {string} text a word or sentence that you need to know how to use in target language.
-     * @param {string} from a source language of the text. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
-     * @param {string} to a target language of examples you need. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
+     * @param {string} text word/phrase/sentence in source language
+     * @param {string} from source language of the text. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
+     * @param {string} to target language of examples you need. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
      */
     getContext(text, from, to) {
-        checkContextLang(from.toLowerCase(), to.toLowerCase());
+        checkContextLang(from, to);
 
         let url = urls.contextUrl + from.toLowerCase() + '-' + to.toLowerCase() + '/' + encodeURIComponent(text);
 
@@ -52,13 +53,13 @@ class Reverso {
     }
 
     /**
-     * Checks spelling of requested text.
+     * Retrieves information about target text as its spelling.
      * @public
-     * @param {string} text a word or sentence that you need to check.
-     * @param {string} lang a source language of the text. Available languages: English and French.
+     * @param {string} text word/phrase/sentence in source language
+     * @param {string} lang source language of the text. Available languages: English and French.
      */
     getSpellCheck(text, lang) {
-        checkSpellLang(lang.toLowerCase());
+        checkSpellLang(lang);
         
         let resLang = {
             'english': 'eng',
@@ -86,13 +87,13 @@ class Reverso {
     }
 
     /**
-     * Looks for synonyms of requested text.
+     * Retrieves synonymous of target text.
      * @public
-     * @param {string} text a word or phrase that you need to check.
-     * @param {string} lang a source language of the text. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
+     * @param {string} text word/phrase/sentence in source language
+     * @param {string} lang source language of the text. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
      */
     getSynonyms(text, lang) {
-        checkSynonymsLang(lang.toLowerCase());
+        checkSynonymsLang(lang);
 
         let resLang = {
             'english': 'en',
