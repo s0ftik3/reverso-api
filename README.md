@@ -23,7 +23,7 @@ reverso.getContext('meet me half way', 'English', 'Russian').then(response => {
 });
 ```
 This method provides you examples of how to use a certain phrase or a word in target language.
-In this case, the phrase is `meet me half way`, its language is `English` and the target language is `German`.
+In this case, the phrase is `meet me half way`, its language is `English` and the target language is `Russian`.
 
 ![getContext output preview](https://i.ibb.co/znw8H26/context.png)
 
