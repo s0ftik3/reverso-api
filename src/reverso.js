@@ -69,7 +69,6 @@ class Reverso {
 
         let url = urls.spellCheckUrl + `?text=${encodeURIComponent(text)}&language=${resLang[lang.toLowerCase()]}&getCorrectionDetails=true`;
 
-        let start_ts = new Date().getTime();
         return axios.get(url).then((response) => {
             let data = response.data;
             let result = [];
@@ -85,7 +84,6 @@ class Reverso {
                 });
             }
 
-            let end_ts = new Date().getTime();
             return result;
         }).catch(() => { throw new Error('reverso.net did not respond or your text has no mistakes.') });
     }
