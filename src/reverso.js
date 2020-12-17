@@ -90,6 +90,7 @@ class Reverso {
 
     /**
      * Retrieves synonymous of target text.
+     * Tests have shown that the method's average latency is ~900ms.
      * @public
      * @param {string} text word/phrase/sentence in source language
      * @param {string} lang source language of the text. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
@@ -111,17 +112,21 @@ class Reverso {
 
         return axios.get(url).then((response) => {
             const $ = cheerio.load(response.data);
-            const result = [];
+            const synonyms = [];
 
             // thanks to https://stackoverflow.com/questions/32655076/cheerio-jquery-selectors-how-to-get-a-list-of-elements-in-nested-divs
             $('body').find(`a[class="synonym  relevant"]`).each((i, e) => {
-                result.push({
+                synonyms.push({
                     id: i,
                     synonym: $(e).text()
                 });
             });
 
-            return result;
+            return {
+                text: text,
+                from: lang,
+                synonyms: synonyms
+            };
         }).catch(() => { throw new Error('reverso.net did not respond or there are no synonyms for the given text.') });
     }
 
