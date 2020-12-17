@@ -1,7 +1,7 @@
 /*
  * Unofficial Reverso API (promise based).
- * You can either find examples of using phrases from your language
- * in target language or check spelling of your text.
+ * This API lets you to do lots of things with you text. You can find any word/phrase/sentence's
+ * context usage in available languages, find any word's synonyms and check your text's spelling.
  * 
  * Source: reverso.net
  * Author: github.com/s0ftik3
