@@ -114,10 +114,10 @@ class Reverso {
             const result = [];
 
             // thanks to https://stackoverflow.com/questions/32655076/cheerio-jquery-selectors-how-to-get-a-list-of-elements-in-nested-divs
-            $('body').find('button[class="copy-to-clipboard icon copy-for-context cursor-pointer"]').each((i, e) => {
+            $('body').find(`a[class="synonym  relevant"]`).each((i, e) => {
                 result.push({
                     id: i,
-                    synonym: $(e).attr('data-word')
+                    synonym: $(e).text()
                 });
             });
 
