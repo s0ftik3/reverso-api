@@ -75,10 +75,11 @@ class Reverso {
             for (let i = 0; i < data.corrections.length; i++) {
                 result.push({
                     id: i,
-                    full_text: data.text,
+                    text: text,
                     type: data.corrections[i].type,
                     explanation: data.corrections[i].longDescription,
-                    corrected: data.corrections[i].correctionText
+                    corrected: data.corrections[i].correctionText,
+                    full_corrected: data.text,
                 });
             }
 
