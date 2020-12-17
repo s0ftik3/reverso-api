@@ -25,7 +25,7 @@ reverso.getContext('meet me half way', 'English', 'Russian').then(response => {
 This method provides you examples of how to use a certain phrase or a word in target language.
 In this case, the phrase is `meet me half way`, its language is `English` and the target language is `German`.
 
-![getContext output preview](https://lh4.googleusercontent.com/YZW_NDQI2byxdKARF2X2gUfhC-eWqzIw8uV4YjYeSolfxbz-FCchYNSpXD6XWox_J5_vN7WozziiMTS9M7TX=w1857-h1008-rw)
+![getContext output preview](https://i.ibb.co/znw8H26/context.png)
 
 _The method returns an object that contains given text, its language, examples' language, text's translation and examples of usage._
 _Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
@@ -41,7 +41,7 @@ reverso.getSpellCheck('helo', 'English').then(response => {
 This method provides you your mistakes that you might make in the text.
 In this case, the text is `Helo`, its language is `English`. The response will be corrected version of the text, therefore `Hello`.
 
-![getSpellCheck output preview](https://lh6.googleusercontent.com/w8R_gbKxBMwh2GaWIC2_4AHAyukAzkUqRyzEnZG4YWc9kpD1JGWwnYjASnEScl-esYLfoEdXTePIuADUydrd=w1857-h1008)
+![getSpellCheck output preview](https://i.ibb.co/PYJ5rKr/spell.png)
 
 _The method returns an array of objects._
 _Available languages for this method: English and French._
@@ -57,7 +57,7 @@ reverso.getSynonyms('dzień dobry', 'Polish').then(response => {
 This method provides you synonyms of word/phrase/sentence.
 In this case, the text is `dzień dobry`, its language is `Polish`.
 
-![getSynonyms output preview](https://lh4.googleusercontent.com/AKpnZPtYzq_pq8UuVqejqtjMg3G6CZUbQsZ4DdndPQT-bCPVVgMGpnbYA2e0GFvygrmDMrzqHhlI7JlvQZsj=w1857-h1008)
+![getSynonyms output preview](https://i.ibb.co/RHHkLtj/synonyms.png)
 
 _The method returns an object that contains given text, its language and array of found synonyms._
 _Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
