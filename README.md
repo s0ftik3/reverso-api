@@ -62,6 +62,21 @@ In this case, the text is `dzień dobry`, its language is `Polish`.
 _The method returns an object that contains given text, its language and array of found synonyms._
 _Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
 
+### `getTranslation`
+```javascript
+reverso.getTranslation('So, how is your day today?', 'English', 'French').then(response => {
+    return console.log(response);
+}).catch(err => {
+    return console.error(err);
+});
+```
+This method provides you full translation of word/phrase/sentence.
+
+![getTranslation output preview](https://i.ibb.co/MZJXVFq/Screenshot-8.png)
+
+_The method returns an object that contains given text, translation, context examples, voice (only for English & Russian)._
+_Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
+
 ### Info
 * All the data is fetched from [reverso.net](https://reverso.net).
 * Author of the API [s0ftik3](https://github.com/s0ftik3).

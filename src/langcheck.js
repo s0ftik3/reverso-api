@@ -96,4 +96,37 @@ function checkSynonymsLang(a) {
 
 }
 
-module.exports = { checkContextLang, checkSpellLang, checkSynonymsLang };
+/**
+ * Checks language support.
+ * @public
+ * @param {string} a First language.
+ * @param {string} b Second language.
+ */
+function checkTranslationLang(a, b) {
+
+    if (typeof(a) === 'string' && typeof(b) === 'string') {
+        true;
+    } else {
+        throw new Error('getTranslation: values must be strings.');
+    }
+
+    a = a.toLowerCase();
+    b = b.toLowerCase();
+    let counter = 0;
+    if (a && b) {
+        for (let i = 0; i < contextLangs.length; i++) {
+            if (a.includes(contextLangs[i]) || b.includes(contextLangs[i])) {
+                counter++
+            }
+        }
+    }
+    
+    if (counter === 2) {
+        return true;
+    } else {
+        throw new Error('getTranslation: Unsupported langauge. Supported langauges: English, Russian, German, Spanish, French, Italian, Polish.');
+    }
+
+}
+
+module.exports = { checkContextLang, checkSpellLang, checkSynonymsLang, checkTranslationLang };

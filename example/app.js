@@ -30,3 +30,10 @@ reverso.getSynonyms('dzień dobry', 'Polish').then(response => {
 }).catch(err => {
     return console.error(err);
 });
+
+// getTranslation method example
+reverso.getTranslation('So, how is your day today?', 'English', 'French').then(response => {
+    return console.log(response);
+}).catch(err => {
+    return console.error(err);
+});
