@@ -54,7 +54,7 @@ class Reverso {
                 examples: examples
             };
 
-        }).catch(() => { throw new Error('reverso.net did not respond or there are no context examples for the given text.') });
+        }).catch((err) => { throw new Error('reverso.net did not respond or there are no context examples for the given text.\n' + err) });
     }
 
     /**
@@ -90,7 +90,7 @@ class Reverso {
             }
 
             return result;
-        }).catch(() => { throw new Error('reverso.net did not respond or your text has no mistakes.') });
+        }).catch((err) => { throw new Error('reverso.net did not respond or your text has no mistakes.\n' + err) });
     }
 
     /**
@@ -132,7 +132,7 @@ class Reverso {
                 from: lang,
                 synonyms: synonyms
             };
-        }).catch(() => { throw new Error('reverso.net did not respond or there are no synonyms for the given text.') });
+        }).catch((err) => { throw new Error('reverso.net did not respond or there are no synonyms for the given text.\n' + err) });
     }
 
     /**
