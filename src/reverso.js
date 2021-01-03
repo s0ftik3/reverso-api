@@ -170,39 +170,61 @@ class Reverso {
             to: lang[to.toLowerCase()]
         }).then(response => {
 
-            let contextExamples = [];
-
-            let sourceExamples = response.data.contextResults.results[0].sourceExamples;
-            let targetExamples = response.data.contextResults.results[0].targetExamples;
-
             let textToVoice = Buffer.from(response.data.translation[0]).toString('base64');
             let condition = lang[to.toLowerCase()] == 'eng' || lang[to.toLowerCase()] == 'rus';
 
-            for (let i = 0; i < sourceExamples.length; i++) {
+            let contextExamples = [];
 
-                contextExamples.push({
-                    from: sourceExamples[i].replace(/<[^>]*>/gi, ''),
-                    to: targetExamples[i].replace(/<[^>]*>/gi, ''),
-                    phrase_from: sourceExamples[i].match(/(?<=<em>)(.*?)(?=<\/em>)/gi)[0],
-                    phrase_to: targetExamples[i].match(/(?<=<em>)(.*?)(?=<\/em>)/gi)[0],
-                });
-                
+            if (response.data.contextResults == null) {
+
+                return {
+                    text: text,
+                    from: response.data.from,
+                    to: response.data.to,
+                    translation: response.data.translation,
+                    context: {
+                        examples: 'no context examples',
+                        rude: 'not defined'
+                    },
+                    detected_language: response.data.languageDetection.detectedLanguage,
+                    voice: (condition) ? `${urls.voice}voiceName=${lang[to.toLowerCase()] == 'eng' ? 'Heather' : 'Alyona'}22k?inputText=${textToVoice}` : false
+                };
+
+            } else {
+
+                let sourceExamples = response.data.contextResults.results[0].sourceExamples;
+                let targetExamples = response.data.contextResults.results[0].targetExamples;
+    
+                console.log(sourceExamples);
+                console.log(targetExamples);
+    
+                for (let i = 0; i < sourceExamples.length; i++) {
+    
+                    contextExamples.push({
+                        from: sourceExamples[i].replace(/<[^>]*>/gi, ''),
+                        to: targetExamples[i].replace(/<[^>]*>/gi, ''),
+                        phrase_from: sourceExamples[i].match(/(?<=<em>)(.*?)(?=<\/em>)/gi)[0],
+                        phrase_to: targetExamples[i].match(/(?<=<em>)(.*?)(?=<\/em>)/gi)[0],
+                    });
+                    
+                }
+
+                return {
+                    text: text,
+                    from: response.data.from,
+                    to: response.data.to,
+                    translation: response.data.translation,
+                    context: {
+                        examples: (contextExamples == undefined) ? 'no examples' : contextExamples,
+                        rude: response.data.contextResults.results[0].rude
+                    },
+                    detected_language: response.data.languageDetection.detectedLanguage,
+                    voice: (condition) ? `${urls.voice}voiceName=${lang[to.toLowerCase()] == 'eng' ? 'Heather' : 'Alyona'}22k?inputText=${textToVoice}` : false
+                };
+
             }
 
-            return {
-                text: text,
-                from: response.data.from,
-                to: response.data.to,
-                translation: response.data.translation,
-                context: {
-                    examples: contextExamples,
-                    rude: response.data.contextResults.results[0].rude
-                },
-                detected_language: response.data.languageDetection.detectedLanguage,
-                voice: (condition) ? `${urls.voice}voiceName=${lang[to.toLowerCase()] == 'eng' ? 'Heather' : 'Alyona'}22k?inputText=${textToVoice}` : false
-            };
-
-        }).catch(() => { throw new Error('reverso.net did not respond or there is no translation for the given text.') });
+        }).catch((err) => { throw new Error('reverso.net did not respond or there is no translation for the given text.\n' + err) });
     }
 
 }
