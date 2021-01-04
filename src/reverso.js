@@ -171,7 +171,7 @@ class Reverso {
         }).then(response => {
 
             let textToVoice = Buffer.from(response.data.translation[0]).toString('base64');
-            let condition = lang[to.toLowerCase()] == 'eng' || lang[to.toLowerCase()] == 'rus';
+            let condition = lang[to.toLowerCase()] == 'eng' || lang[to.toLowerCase()] == 'rus' && response.data.translation[0].length <= 150;
 
             let contextExamples = [];
 
