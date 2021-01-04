@@ -212,7 +212,7 @@ class Reverso {
                     to: response.data.to,
                     translation: response.data.translation,
                     context: {
-                        examples: (contextExamples == undefined) ? 'no examples' : contextExamples,
+                        examples: contextExamples,
                         rude: response.data.contextResults.results[0].rude
                     },
                     detected_language: response.data.languageDetection.detectedLanguage,
