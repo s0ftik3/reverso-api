@@ -195,9 +195,6 @@ class Reverso {
                 let sourceExamples = response.data.contextResults.results[0].sourceExamples;
                 let targetExamples = response.data.contextResults.results[0].targetExamples;
     
-                console.log(sourceExamples);
-                console.log(targetExamples);
-    
                 for (let i = 0; i < sourceExamples.length; i++) {
     
                     contextExamples.push({
