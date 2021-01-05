@@ -50,7 +50,7 @@ class Reverso {
                 text: text,
                 from: from,
                 to: to,
-                translation: translation,
+                translation: translation.filter(e => e != text),
                 examples: examples
             };
 
