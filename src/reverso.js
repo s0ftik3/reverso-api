@@ -175,7 +175,7 @@ class Reverso {
 
             let contextExamples = [];
 
-            if (response.data.contextResults == null) {
+            if (response.data.contextResults == null || response.data.contextResults.results.length <= 0) {
 
                 return {
                     text: text,
