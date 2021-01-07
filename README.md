@@ -74,7 +74,7 @@ This method provides you full translation of word/phrase/sentence.
 
 ![getTranslation output preview](https://i.ibb.co/MZJXVFq/Screenshot-8.png)
 
-_The method returns an object that contains given text, translation, context examples, voice (only for English & Russian)._
+_The method returns an object that contains given text, translation, context examples and voice._
 _Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
 
 ### Info
