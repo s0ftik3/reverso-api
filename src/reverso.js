@@ -157,6 +157,16 @@ class Reverso {
             'spanish': 'spa'
         };
 
+        let voices = {
+            'english': 'Heather22k',
+            'french': 'Alice22k',
+            'german': 'Claudia22k',
+            'russian': 'Alyona22k',
+            'italian': 'Chiara22k',
+            'polish': 'Ania22k',
+            'spanish': 'Ines22k'
+        };
+
         return axios.post(urls.translation, {
             format: 'text',
             from: lang[from.toLowerCase()],
@@ -171,7 +181,7 @@ class Reverso {
         }).then(response => {
 
             let textToVoice = Buffer.from(response.data.translation[0]).toString('base64');
-            let condition = lang[to.toLowerCase()] == 'eng' || lang[to.toLowerCase()] == 'rus' && response.data.translation[0].length <= 150;
+            let condition = voices[to.toLowerCase()] != undefined && response.data.translation[0].length <= 150;
 
             let contextExamples = [];
 
@@ -187,7 +197,7 @@ class Reverso {
                         rude: 'not defined'
                     },
                     detected_language: response.data.languageDetection.detectedLanguage,
-                    voice: (condition) ? `${urls.voice}voiceName=${lang[to.toLowerCase()] == 'eng' ? 'Heather' : 'Alyona'}22k?inputText=${textToVoice}` : false
+                    voice: (condition) ? `${urls.voice}voiceName=${voices[to.toLowerCase()]}?inputText=${textToVoice}` : false
                 };
 
             } else {
@@ -216,7 +226,7 @@ class Reverso {
                         rude: response.data.contextResults.results[0].rude
                     },
                     detected_language: response.data.languageDetection.detectedLanguage,
-                    voice: (condition) ? `${urls.voice}voiceName=${lang[to.toLowerCase()] == 'eng' ? 'Heather' : 'Alyona'}22k?inputText=${textToVoice}` : false
+                    voice: (condition) ? `${urls.voice}voiceName=${voices[to.toLowerCase()]}?inputText=${textToVoice}` : false
                 };
 
             }
