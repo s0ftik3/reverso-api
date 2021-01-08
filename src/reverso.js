@@ -23,7 +23,19 @@ class Reverso {
 
         let url = urls.contextUrl + from.toLowerCase() + '-' + to.toLowerCase() + '/' + encodeURIComponent(text);
 
-        return axios(url).then((response) => {
+        return axios({
+            method: 'GET',
+            url: url,
+            headers: {
+                Accept: 'application/json, text/javascript, */*; q=0.01',
+                Connection: 'keep-alive',
+                'Content-Type': 'application/json; charset=UTF-8',
+                Origin: 'https://reverso.net',
+                'Sec-Fetch-Dest': 'empty',
+                'Sec-Fetch-Mode': 'cors',
+                'Sec-Fetch-Site': 'same-site'
+            }
+        }).then((response) => {
             const $ = cheerio.load(response.data);
             let examples = [];
             let translation = [];
@@ -74,7 +86,19 @@ class Reverso {
 
         let url = urls.spellCheckUrl + `?text=${encodeURIComponent(text)}&language=${resLang[lang.toLowerCase()]}&getCorrectionDetails=true`;
 
-        return axios.get(url).then((response) => {
+        return axios({
+            method: 'GET',
+            url: url,
+            headers: {
+                Accept: 'application/json, text/javascript, */*; q=0.01',
+                Connection: 'keep-alive',
+                'Content-Type': 'application/json; charset=UTF-8',
+                Origin: 'https://reverso.net',
+                'Sec-Fetch-Dest': 'empty',
+                'Sec-Fetch-Mode': 'cors',
+                'Sec-Fetch-Site': 'same-site'
+            }
+        }).then((response) => {
             let data = response.data;
             let result = [];
 
@@ -115,7 +139,19 @@ class Reverso {
 
         let url = urls.synonymsUrl + `${resLang[lang.toLowerCase()]}/${encodeURIComponent(text)}`;
 
-        return axios.get(url).then((response) => {
+        return axios({
+            method: 'GET',
+            url: url,
+            headers: {
+                Accept: 'application/json, text/javascript, */*; q=0.01',
+                Connection: 'keep-alive',
+                'Content-Type': 'application/json; charset=UTF-8',
+                Origin: 'https://reverso.net',
+                'Sec-Fetch-Dest': 'empty',
+                'Sec-Fetch-Mode': 'cors',
+                'Sec-Fetch-Site': 'same-site'
+            }
+        }).then((response) => {
             const $ = cheerio.load(response.data);
             const synonyms = [];
 
@@ -177,7 +213,16 @@ class Reverso {
                 origin: 'reversomobile',
                 sentenceSplitter: false
             },
-            to: lang[to.toLowerCase()]
+            to: lang[to.toLowerCase()],
+            headers: {
+                Accept: 'application/json, text/javascript, */*; q=0.01',
+                Connection: 'keep-alive',
+                'Content-Type': 'application/json; charset=UTF-8',
+                Origin: 'https://reverso.net',
+                'Sec-Fetch-Dest': 'empty',
+                'Sec-Fetch-Mode': 'cors',
+                'Sec-Fetch-Site': 'same-site'
+            }
         }).then(response => {
 
             let textToVoice = Buffer.from(response.data.translation[0]).toString('base64');
