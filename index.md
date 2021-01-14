@@ -1,37 +1,82 @@
-## Welcome to GitHub Pages
+# (Unofficial) Reverso API
+A simple wrapper around [reverso.net](https://reverso.net).
 
-You can use the [editor on GitHub](https://github.com/s0ftik3/reverso-api/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+## Installing
+```
+$ npm install reverso-api
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+## Usage
+```javascript
+const Reverso = require('reverso-api');
+const reverso = new Reverso();
+```
+Congrats! You can use all the methods now.\
+Let's read through the README and find out how it works.
 
-### Jekyll Themes
+### `getContext`
+```javascript
+reverso.getContext('meet me half way', 'English', 'Russian').then(response => {
+    return console.log(response);
+}).catch(err => {
+    return console.error(err);
+});
+```
+This method provides you examples of how to use a certain phrase or a word in target language.
+In this case, the phrase is `meet me half way`, its language is `English` and the target language is `Russian`.
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/s0ftik3/reverso-api/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+![getContext output preview](https://i.ibb.co/znw8H26/context.png)
 
-### Support or Contact
+_The method returns an object that contains given text, its language, examples' language, text's translation and examples of usage._
+_Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+### `getSpellCheck`
+```javascript
+reverso.getSpellCheck('helo', 'English').then(response => {
+    return console.log(response);
+}).catch(err => {
+    return console.error(err);
+});
+```
+This method provides you your mistakes that you might make in the text.
+In this case, the text is `Helo`, its language is `English`. The response will be corrected version of the text, therefore `Hello`.
+
+![getSpellCheck output preview](https://i.ibb.co/PYJ5rKr/spell.png)
+
+_The method returns an array of objects._
+_Available languages for this method: English and French._
+
+### `getSynonyms`
+```javascript
+reverso.getSynonyms('dzień dobry', 'Polish').then(response => {
+    return console.log(response);
+}).catch(err => {
+    return console.error(err);
+});
+```
+This method provides you synonyms of word/phrase/sentence.
+In this case, the text is `dzień dobry`, its language is `Polish`.
+
+![getSynonyms output preview](https://i.ibb.co/RHHkLtj/synonyms.png)
+
+_The method returns an object that contains given text, its language and array of found synonyms._
+_Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
+
+### `getTranslation`
+```javascript
+reverso.getTranslation('So, how is your day today?', 'English', 'French').then(response => {
+    return console.log(response);
+}).catch(err => {
+    return console.error(err);
+});
+```
+This method provides you full translation of word/phrase/sentence.
+
+![getTranslation output preview](https://i.ibb.co/MZJXVFq/Screenshot-8.png)
+
+_The method returns an object that contains given text, translation, context examples and voice._
+_Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
+
+### Info
+* All the data is fetched from [reverso.net](https://reverso.net).
+* Author of the API [s0ftik3](https://github.com/s0ftik3).
