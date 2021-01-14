@@ -14,7 +14,8 @@ const reverso = new Reverso();
 Congrats! You can use all the methods now.\
 Let's read through the README and find out how it works.
 
-### `getContext`
+## Methods
+### getContext
 ```javascript
 reverso.getContext('meet me half way', 'English', 'Russian').then(response => {
     return console.log(response);
@@ -30,7 +31,7 @@ In this case, the phrase is `meet me half way`, its language is `English` and th
 _The method returns an object that contains given text, its language, examples' language, text's translation and examples of usage._
 _Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
 
-### `getSpellCheck`
+### getSpellCheck
 ```javascript
 reverso.getSpellCheck('helo', 'English').then(response => {
     return console.log(response);
@@ -46,7 +47,7 @@ In this case, the text is `Helo`, its language is `English`. The response will b
 _The method returns an array of objects._
 _Available languages for this method: English and French._
 
-### `getSynonyms`
+### getSynonyms
 ```javascript
 reverso.getSynonyms('dzień dobry', 'Polish').then(response => {
     return console.log(response);
@@ -62,7 +63,7 @@ In this case, the text is `dzień dobry`, its language is `Polish`.
 _The method returns an object that contains given text, its language and array of found synonyms._
 _Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
 
-### `getTranslation`
+### getTranslation
 ```javascript
 reverso.getTranslation('So, how is your day today?', 'English', 'French').then(response => {
     return console.log(response);
