@@ -256,8 +256,8 @@ module.exports = class Reverso {
                         contextExamples.push({
                             from: sourceExamples[i].replace(/<[^>]*>/gi, ''),
                             to: targetExamples[i].replace(/<[^>]*>/gi, ''),
-                            phrase_from: sourceExamples[i].match(/(?<=<em>)(.*?)(?=<\/em>)/gi)[0],
-                            phrase_to: targetExamples[i].match(/(?<=<em>)(.*?)(?=<\/em>)/gi)[0],
+                            phrase_from: [...sourceExamples[i].matchAll(/<em>(.*?)<\/em>/g)][0][1],
+                            phrase_to: [...targetExamples[i].matchAll(/<em>(.*?)<\/em>/g)][0][1]
                         });
                     }
 
