@@ -1,5 +1,6 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const randomUseragent = require('random-useragent');
 const urls = require('./urls');
 const { 
     checkContextLang, 
@@ -186,10 +187,10 @@ module.exports = class Reverso {
      * @param {string} from source language of the text. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
      * @param {string} to target language of examples you need. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
      */
-    getTranslation(text, from, to) {
+    async getTranslation(text, from, to) {
         checkTranslationLang(from, to);
 
-        let lang = {
+        const language = {
             english: 'eng',
             french: 'fra',
             german: 'ger',
@@ -199,7 +200,7 @@ module.exports = class Reverso {
             spanish: 'spa',
         };
 
-        let voices = {
+        const voice = {
             english: 'Heather22k',
             french: 'Alice22k',
             german: 'Claudia22k',
@@ -209,74 +210,70 @@ module.exports = class Reverso {
             spanish: 'Ines22k',
         };
 
-        return axios
-            .post(urls.translation, {
-                format: 'text',
-                from: lang[from.toLowerCase()],
-                input: text,
-                options: {
-                    contextResults: true,
-                    languageDetection: true,
-                    origin: 'reversomobile',
-                    sentenceSplitter: false,
-                },
-                to: lang[to.toLowerCase()],
-                headers: {
-                    Accept:
-                        'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-                    Connection: 'keep-alive',
-                    'User-Agent':
-                        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246',
-                },
-            })
-            .then((response) => {
-                let textToVoice = Buffer.from(response.data.translation[0]).toString('base64');
-                let condition = voices[to.toLowerCase()] != undefined && response.data.translation[0].length <= 150;
+        const result = await axios.post(urls.translation, {
+            format: 'text',
+            from: language[from.toLowerCase()],
+            input: text,
+            options: {
+                contextResults: true,
+                languageDetection: true,
+                origin: 'reversomobile',
+                sentenceSplitter: false,
+            },
+            to: language[to.toLowerCase()],
+            headers: {
+                Accept: '*/*',
+                Connection: 'keep-alive',
+                'User-Agent': randomUseragent.getRandom(),
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            const textToVoice = Buffer.from(response.data.translation[0]).toString('base64');
+            const condition = voice[to.toLowerCase()] != undefined && response.data.translation[0].length <= 150;
 
-                let contextExamples = [];
+            const contextExamples = [];
 
-                if (response.data.contextResults == null || response.data.contextResults.results.length <= 0) {
-                    return {
-                        text: text,
-                        from: response.data.from,
-                        to: response.data.to,
-                        translation: response.data.translation,
-                        context: {
-                            examples: 'no context examples',
-                            rude: 'not defined',
-                        },
-                        detected_language: response.data.languageDetection.detectedLanguage,
-                        voice: condition ? `${urls.voice}voiceName=${voices[to.toLowerCase()]}?inputText=${textToVoice}` : false,
-                    };
-                } else {
-                    let sourceExamples = response.data.contextResults.results[0].sourceExamples;
-                    let targetExamples = response.data.contextResults.results[0].targetExamples;
+            if (response.data.contextResults == null || response.data.contextResults.results.length <= 0) {
+                return {
+                    text: text,
+                    from: response.data.from,
+                    to: response.data.to,
+                    translation: response.data.translation,
+                    context: {
+                        examples: 'no context examples',
+                        rude: 'not defined',
+                    },
+                    detected_language: response.data.languageDetection.detectedLanguage,
+                    voice: condition ? `${urls.voice}voiceName=${voice[to.toLowerCase()]}?inputText=${textToVoice}` : false,
+                };
+            } else {
+                let sourceExamples = response.data.contextResults.results[0].sourceExamples;
+                let targetExamples = response.data.contextResults.results[0].targetExamples;
 
-                    for (let i = 0; i < sourceExamples.length; i++) {
-                        contextExamples.push({
-                            from: sourceExamples[i].replace(/<[^>]*>/gi, ''),
-                            to: targetExamples[i].replace(/<[^>]*>/gi, ''),
-                            phrase_from: [...sourceExamples[i].matchAll(/<em>(.*?)<\/em>/g)][0][1],
-                            phrase_to: [...targetExamples[i].matchAll(/<em>(.*?)<\/em>/g)][0][1]
-                        });
-                    }
-
-                    return {
-                        text: text,
-                        from: response.data.from,
-                        to: response.data.to,
-                        translation: response.data.translation,
-                        context: {
-                            examples: contextExamples,
-                            rude: response.data.contextResults.results[0].rude,
-                        },
-                        detected_language: response.data.languageDetection.detectedLanguage,
-                        voice: condition ? `${urls.voice}voiceName=${voices[to.toLowerCase()]}?inputText=${textToVoice}` : false,
-                    };
+                for (let i = 0; i < sourceExamples.length; i++) {
+                    contextExamples.push({
+                        from: sourceExamples[i].replace(/<[^>]*>/gi, ''),
+                        to: targetExamples[i].replace(/<[^>]*>/gi, ''),
+                        phrase_from: [...sourceExamples[i].matchAll(/<em>(.*?)<\/em>/g)][0][1],
+                        phrase_to: [...targetExamples[i].matchAll(/<em>(.*?)<\/em>/g)][0][1]
+                    });
                 }
-            })
-            .catch((err) => {
-                throw new Error('reverso.net did not respond or there is no translation for the given text.\n' + err);
-            });
+
+                return {
+                    text: text,
+                    from: response.data.from,
+                    to: response.data.to,
+                    translation: response.data.translation,
+                    context: {
+                        examples: contextExamples,
+                        rude: response.data.contextResults.results[0].rude,
+                    },
+                    detected_language: response.data.languageDetection.detectedLanguage,
+                    voice: condition ? `${urls.voice}voiceName=${voice[to.toLowerCase()]}?inputText=${textToVoice}` : false,
+                };
+            }
+        }).catch(console.error);
+
+        return result;
     }
 };
