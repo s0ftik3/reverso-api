@@ -1,3 +1,5 @@
+'use-strict';
+
 const axios = require('axios');
 const cheerio = require('cheerio');
 const randomUseragent = require('random-useragent');
@@ -18,56 +20,52 @@ module.exports = class Reverso {
      * @param {string} from source language of the text. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
      * @param {string} to target language of examples you need. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
      */
-    getContext(text, from, to) {
+    async getContext(text, from, to) {
         checkContextLang(from, to);
 
-        let url = urls.contextUrl + from.toLowerCase() + '-' + to.toLowerCase() + '/' + encodeURIComponent(text);
+        const url = urls.contextUrl + from.toLowerCase() + '-' + to.toLowerCase() + '/' + encodeURIComponent(text);
 
-        return axios({
+        const result = await axios({
             method: 'GET',
             url: url,
             headers: {
-                Accept:
-                    'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                Accept: '*/*',
                 Connection: 'keep-alive',
-                'User-Agent':
-                    'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Mobile Safari/537.36',
-            },
-        })
-            .then((response) => {
-                const $ = cheerio.load(response.data);
-                let examples = [];
-                let translation = [];
+                'User-Agent': randomUseragent.getRandom()
+            }
+        }).then(response => {
+            const $ = cheerio.load(response.data);
+            const examples = [];
+            const translation = [];
 
-                let fromExample = $('body').find('.example').find('div[class="src ltr"] > span[class="text"]').text().trim().split('\n');
-                let toExample = $('body').find('.example').find('div[class="trg ltr"] > span[class="text"]').text().trim().split('\n');
-                let toTranslation = $('body').find('div[id="translations-content"]').text().split('\n');
+            const fromExample = $('body').find('.example').find('div[class="src ltr"] > span[class="text"]').text().trim().split('\n');
+            const toExample = $('body').find('.example').find('div[class="trg ltr"] > span[class="text"]').text().trim().split('\n');
+            const toTranslation = $('body').find('div[id="translations-content"]').text().split('\n');
 
-                for (let i = 0; i < fromExample.length; i++) {
-                    examples.push({
-                        id: i,
-                        from: fromExample[i].trimStart(),
-                        to: toExample[i].trimStart(),
-                    });
-                }
-
-                toTranslation.forEach((e) => {
-                    let string = e.trim();
-                    if (string.length <= 0) return;
-                    translation.push(e.trim());
+            for (let i = 0; i < fromExample.length; i++) {
+                examples.push({
+                    id: i,
+                    from: fromExample[i].trimStart(),
+                    to: toExample[i].trimStart(),
                 });
+            }
 
-                return {
-                    text: text,
-                    from: from,
-                    to: to,
-                    translation: translation.filter((e) => e != text),
-                    examples: examples,
-                };
-            })
-            .catch((err) => {
-                throw new Error('reverso.net did not respond or there are no context examples for the given text.\n' + err);
+            toTranslation.forEach((e) => {
+                let string = e.trim();
+                if (string.length <= 0) return;
+                translation.push(e.trim());
             });
+
+            return {
+                text: text,
+                from: from,
+                to: to,
+                translation: translation.filter((e) => e != text),
+                examples: examples,
+            };
+        }).catch(console.error);
+
+        return result;
     }
 
     /**
@@ -77,47 +75,43 @@ module.exports = class Reverso {
      * @param {string} text word/phrase/sentence in source language
      * @param {string} lang source language of the text. Available languages: English and French.
      */
-    getSpellCheck(text, lang) {
+    async getSpellCheck(text, lang) {
         checkSpellLang(lang);
 
-        let resLang = {
+        const resLang = {
             english: 'eng',
             french: 'fra',
         };
 
-        let url = urls.spellCheckUrl + `?text=${encodeURIComponent(text)}&language=${resLang[lang.toLowerCase()]}&getCorrectionDetails=true`;
+        const url = urls.spellCheckUrl + `?text=${encodeURIComponent(text)}&language=${resLang[lang.toLowerCase()]}&getCorrectionDetails=true`;
 
-        return axios({
+        const result = await axios({
             method: 'GET',
             url: url,
             headers: {
-                Accept:
-                    'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                Accept: '*/*',
                 Connection: 'keep-alive',
-                'User-Agent':
-                    'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Mobile Safari/537.36',
-            },
-        })
-            .then((response) => {
-                let data = response.data;
-                let result = [];
+                'User-Agent': randomUseragent.getRandom()
+            }
+        }).then(response => {
+            const data = response.data;
+            const _result = [];
 
-                for (let i = 0; i < data.corrections.length; i++) {
-                    result.push({
-                        id: i,
-                        text: text,
-                        type: data.corrections[i].type,
-                        explanation: data.corrections[i].longDescription,
-                        corrected: data.corrections[i].correctionText,
-                        full_corrected: data.text,
-                    });
-                }
+            for (let i = 0; i < data.corrections.length; i++) {
+                _result.push({
+                    id: i,
+                    text: text,
+                    type: data.corrections[i].type,
+                    explanation: data.corrections[i].longDescription,
+                    corrected: data.corrections[i].correctionText,
+                    full_corrected: data.text,
+                });
+            }
 
-                return result;
-            })
-            .catch((err) => {
-                throw new Error('reverso.net did not respond or your text has no mistakes.\n' + err);
-            });
+            return _result;
+        }).catch(console.error);
+
+        return result;
     }
 
     /**
@@ -127,10 +121,10 @@ module.exports = class Reverso {
      * @param {string} text word/phrase/sentence in source language
      * @param {string} lang source language of the text. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
      */
-    getSynonyms(text, lang) {
+    async getSynonyms(text, lang) {
         checkSynonymsLang(lang);
 
-        let resLang = {
+        const resLang = {
             english: 'en',
             french: 'fr',
             german: 'de',
@@ -140,42 +134,35 @@ module.exports = class Reverso {
             spanish: 'es',
         };
 
-        let url = urls.synonymsUrl + `${resLang[lang.toLowerCase()]}/${encodeURIComponent(text)}`;
+        const url = urls.synonymsUrl + `${resLang[lang.toLowerCase()]}/${encodeURIComponent(text)}`;
 
-        return axios({
+        const result = await axios({
             method: 'GET',
             url: url,
             headers: {
-                Accept:
-                    'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                Accept: '*/*',
                 Connection: 'keep-alive',
-                'User-Agent':
-                    'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Mobile Safari/537.36',
-            },
-        })
-            .then((response) => {
-                const $ = cheerio.load(response.data);
-                const synonyms = [];
+                'User-Agent': randomUseragent.getRandom()
+            }
+        }).then(response => {
+            const $ = cheerio.load(response.data);
+            const synonyms = [];
 
-                // thanks to https://stackoverflow.com/questions/32655076/cheerio-jquery-selectors-how-to-get-a-list-of-elements-in-nested-divs
-                $('body')
-                    .find(`a[class="synonym  relevant"]`)
-                    .each((i, e) => {
-                        synonyms.push({
-                            id: i,
-                            synonym: $(e).text(),
-                        });
-                    });
-
-                return {
-                    text: text,
-                    from: lang,
-                    synonyms: synonyms,
-                };
-            })
-            .catch((err) => {
-                throw new Error('reverso.net did not respond or there are no synonyms for the given text.\n' + err);
+            $('body').find(`a[class="synonym  relevant"]`).each((i, e) => {
+                synonyms.push({
+                    id: i,
+                    synonym: $(e).text(),
+                });
             });
+
+            return {
+                text: text,
+                from: lang,
+                synonyms: synonyms,
+            };
+        }).catch(console.error);
+
+        return result;
     }
 
     /**

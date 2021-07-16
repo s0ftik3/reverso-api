@@ -63,6 +63,7 @@ _The method returns an object that contains given text, its language and array o
 _Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
 
 ### `getTranslation`
+`Warning: eventually, this method may stop working because your server's IP address will be banned by Reverso moderators.`
 ```javascript
 reverso.getTranslation('So, how is your day today?', 'English', 'French').then(response => {
     return console.log(response);
