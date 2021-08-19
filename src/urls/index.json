@@ -1,7 +1,0 @@
-{
-    "contextUrl": "https://context.reverso.net/translation/",
-    "spellCheckUrl": "https://orthographe.reverso.net/api/v1/Spelling",
-    "synonymsUrl": "https://synonyms.reverso.net/synonym/",
-    "translation": "https://api.reverso.net/translate/v1/translation",
-    "voice": "https://voice.reverso.net/RestPronunciation.svc/v1/output=json/GetVoiceStream/"
-}

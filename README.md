@@ -1,8 +1,18 @@
 # (Unofficial) Reverso API
-A simple wrapper around [reverso.net](https://reverso.net).
+The API allows you to manipulate with your text in different ways. Almost all the features from the website are supported by this API. Currently supported: context, translation, spell check, synonyms.
+
+## Navigation
+- [Installing](#installing)
+- [Usage](#usage)
+- [Examples](#examples)
+    - [getContext](#getcontext)
+    - [getSpellCheck](#getspellcheck)
+    - [getSynonyms](#getsynonyms)
+    - [getTranslation](#gettranslation)
+- [Credits](#credits)
 
 ## Installing
-```
+```bash
 $ npm install reverso-api
 ```
 
@@ -11,73 +21,160 @@ $ npm install reverso-api
 const Reverso = require('reverso-api');
 const reverso = new Reverso();
 ```
-Congrats! You can use all the methods now.\
-Let's read through the README and find out how it works.
+Congrats! You can use all the available methods now.\
+Let's read through the README and find out how the things work.
 
-### `getContext`
+Remember, you can pass either callback function...
 ```javascript
-reverso.getContext('meet me half way', 'English', 'Russian').then(response => {
-    return console.log(response);
-}).catch(err => {
-    return console.error(err);
+reverso.getContext(...params, (response) => {
+    ...
 });
 ```
-This method provides you examples of how to use a certain phrase or a word in target language.
-In this case, the phrase is `meet me half way`, its language is `English` and the target language is `Russian`.
 
-![getContext output preview](https://i.ibb.co/znw8H26/context.png)
+or use `.then()` function.
 
-_The method returns an object that contains given text, its language, examples' language, text's translation and examples of usage._
-_Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
+```javascript
+reverso.getContext(...params).then((response) => {
+    ...
+});
+```
+
+All the examples below will be given using callback function.
+
+## Examples
+### `getContext`
+```javascript
+reverso.getContext('meet me half way', 'English', 'Russian', (response) => {
+    console.log(response);
+}).catch(err => {
+    console.error(err);
+});
+```
+
+Response:
+```json
+{
+    text: String,
+    from: String,
+    to: String,
+    translation: [String, ...],
+    examples: [
+        {
+            id: Number,
+            from: String,
+            to: String
+        },
+        ...
+    ]
+}
+```
+
+Error:
+```json
+{ method: String, error: String }
+```
+
+_Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish, Chinese._
 
 ### `getSpellCheck`
 ```javascript
-reverso.getSpellCheck('helo', 'English').then(response => {
-    return console.log(response);
+reverso.getSpellCheck('helo', 'English', (response) => {
+    console.log(response);
 }).catch(err => {
-    return console.error(err);
+    console.error(err);
 });
 ```
-This method provides you your mistakes that you might make in the text.
-In this case, the text is `Helo`, its language is `English`. The response will be corrected version of the text, therefore `Hello`.
 
-![getSpellCheck output preview](https://i.ibb.co/PYJ5rKr/spell.png)
+Response:
+```json
+[
+    {
+        id: Number,
+        text: String,
+        type: String,
+        explanation: String,
+        corrected: String,
+        full_corrected: String
+    }
+]
+```
 
-_The method returns an array of objects._
+Error:
+```json
+{ method: String, error: String }
+```
+
 _Available languages for this method: English and French._
 
 ### `getSynonyms`
 ```javascript
-reverso.getSynonyms('dzień dobry', 'Polish').then(response => {
-    return console.log(response);
+reverso.getSynonyms('dzień dobry', 'Polish', (response) => {
+    console.log(response);
 }).catch(err => {
-    return console.error(err);
+    console.error(err);
 });
 ```
-This method provides you synonyms of word/phrase/sentence.
-In this case, the text is `dzień dobry`, its language is `Polish`.
 
-![getSynonyms output preview](https://i.ibb.co/RHHkLtj/synonyms.png)
+Response:
+```json
+{
+    text: String,
+    from: String,
+    synonyms: [
+        { id: Number, synonym: String },
+        ...
+    ]
+}
+```
 
-_The method returns an object that contains given text, its language and array of found synonyms._
+Error:
+```json
+{ method: String, error: String }
+```
+
 _Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
 
 ### `getTranslation`
-`Warning: eventually, this method may stop working because your server's IP address will be banned by Reverso moderators.`
+> **WARNING:** eventually, your server's IP address might get banned by Reverso moderators and you won't receive any data.
 ```javascript
-reverso.getTranslation('So, how is your day today?', 'English', 'French').then(response => {
-    return console.log(response);
+reverso.getTranslation('Hello', 'English', 'French', (response) => {
+    console.log(response);
 }).catch(err => {
-    return console.error(err);
+    console.error(err);
 });
 ```
-This method provides you full translation of word/phrase/sentence.
 
-![getTranslation output preview](https://i.ibb.co/MZJXVFq/Screenshot-8.png)
+Response:
+```json
+{
+    text: String,
+    from: String,
+    to: String,
+    translation: [String, ...],
+    context: {
+        examples: [
+            {
+                from: String,
+                to: String,
+                phrase_from: String,
+                phrase_to: String
+            },
+            ...
+        ], 
+        rude: Boolean
+    }, // or null
+    detected_language: String,
+    voice: String // or null
+}
+```
 
-_The method returns an object that contains given text, translation, context examples and voice._
+Error:
+```json
+{ method: String, error: String }
+```
+
 _Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
 
-### Info
+### Credits
 * All the data is fetched from [reverso.net](https://reverso.net).
-* Author of the API [s0ftik3](https://github.com/s0ftik3).
+* Author of the API [@vychs](https://t.me/vychs).

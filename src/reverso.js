@@ -1,266 +1,336 @@
+/*
+ * Unofficial Reverso API (promise-based).
+ * The API allows you to manipulate with your text in different ways.
+ * Almost all the features from the website are supported by this API.
+ * Currently supported: context, translation, spell check, synonyms.
+ * 
+ * Source: reverso.net
+ * Author: github.com/s0ftik3
+ */
+
 'use-strict';
 
 const axios = require('axios');
 const cheerio = require('cheerio');
 const randomUseragent = require('random-useragent');
-const urls = require('./urls');
-const { 
-    checkContextLang, 
-    checkSpellLang, 
-    checkSynonymsLang, 
-    checkTranslationLang
-} = require('./langcheck');
+const constants = require('./constants');
+const checkLanguage = require('./checkLanguage');
 
 module.exports = class Reverso {
     /**
-     * Retrieves information about target text as its translation, usage examples.
-     * Tests have shown that the method's average latency is ~1.3sec.
-     * @public
-     * @param {string} text word/phrase/sentence in source language
-     * @param {string} from source language of the text. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
-     * @param {string} to target language of examples you need. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
+     * The same as context feature on reverso.net
+     * @param {String} text Your query.
+     * @param {String} from Available languages: English, Russian, German, Spanish, French, Italian, Polish, Chinese.
+     * @param {String} to Available languages: English, Russian, German, Spanish, French, Italian, Polish, Chinese.
+     * @param {Function} callback Your callback function. Not important.
+     * @returns An object with data or an object with error(s).
      */
-    async getContext(text, from, to) {
-        checkContextLang(from, to);
+    getContext(text, from, to, callback) {
+        return new Promise(async (resolve, reject) => {
+            const from_language = from.toLowerCase();
+            const to_language = to.toLowerCase();
 
-        const url = urls.contextUrl + from.toLowerCase() + '-' + to.toLowerCase() + '/' + encodeURIComponent(text);
-
-        const result = await axios({
-            method: 'GET',
-            url: url,
-            headers: {
-                Accept: '*/*',
-                Connection: 'keep-alive',
-                'User-Agent': randomUseragent.getRandom()
-            }
-        }).then(response => {
-            const $ = cheerio.load(response.data);
-            const examples = [];
-            const translation = [];
-
-            const fromExample = $('body').find('.example').find('div[class="src ltr"] > span[class="text"]').text().trim().split('\n');
-            const toExample = $('body').find('.example').find('div[class="trg ltr"] > span[class="text"]').text().trim().split('\n');
-            const toTranslation = $('body').find('div[id="translations-content"]').text().split('\n');
-
-            for (let i = 0; i < fromExample.length; i++) {
-                examples.push({
-                    id: i,
-                    from: fromExample[i].trimStart(),
-                    to: toExample[i].trimStart(),
-                });
-            }
-
-            toTranslation.forEach((e) => {
-                let string = e.trim();
-                if (string.length <= 0) return;
-                translation.push(e.trim());
-            });
-
-            return {
-                text: text,
-                from: from,
-                to: to,
-                translation: translation.filter((e) => e != text),
-                examples: examples,
-            };
-        }).catch(console.error);
-
-        return result;
-    }
-
-    /**
-     * Retrieves information about target text as its spelling.
-     * Tests have shown that the method's average latency is ~420ms.
-     * @public
-     * @param {string} text word/phrase/sentence in source language
-     * @param {string} lang source language of the text. Available languages: English and French.
-     */
-    async getSpellCheck(text, lang) {
-        checkSpellLang(lang);
-
-        const resLang = {
-            english: 'eng',
-            french: 'fra',
-        };
-
-        const url = urls.spellCheckUrl + `?text=${encodeURIComponent(text)}&language=${resLang[lang.toLowerCase()]}&getCorrectionDetails=true`;
-
-        const result = await axios({
-            method: 'GET',
-            url: url,
-            headers: {
-                Accept: '*/*',
-                Connection: 'keep-alive',
-                'User-Agent': randomUseragent.getRandom()
-            }
-        }).then(response => {
-            const data = response.data;
-            const _result = [];
-
-            for (let i = 0; i < data.corrections.length; i++) {
-                _result.push({
-                    id: i,
-                    text: text,
-                    type: data.corrections[i].type,
-                    explanation: data.corrections[i].longDescription,
-                    corrected: data.corrections[i].correctionText,
-                    full_corrected: data.text,
-                });
-            }
-
-            return _result;
-        }).catch(console.error);
-
-        return result;
-    }
-
-    /**
-     * Retrieves synonymous of target text.
-     * Tests have shown that the method's average latency is ~900ms.
-     * @public
-     * @param {string} text word/phrase/sentence in source language
-     * @param {string} lang source language of the text. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
-     */
-    async getSynonyms(text, lang) {
-        checkSynonymsLang(lang);
-
-        const resLang = {
-            english: 'en',
-            french: 'fr',
-            german: 'de',
-            russian: 'ru',
-            italian: 'it',
-            polish: 'pl',
-            spanish: 'es',
-        };
-
-        const url = urls.synonymsUrl + `${resLang[lang.toLowerCase()]}/${encodeURIComponent(text)}`;
-
-        const result = await axios({
-            method: 'GET',
-            url: url,
-            headers: {
-                Accept: '*/*',
-                Connection: 'keep-alive',
-                'User-Agent': randomUseragent.getRandom()
-            }
-        }).then(response => {
-            const $ = cheerio.load(response.data);
-            const synonyms = [];
-
-            $('body').find(`a[class="synonym  relevant"]`).each((i, e) => {
-                synonyms.push({
-                    id: i,
-                    synonym: $(e).text(),
-                });
-            });
-
-            return {
-                text: text,
-                from: lang,
-                synonyms: synonyms,
-            };
-        }).catch(console.error);
-
-        return result;
-    }
-
-    /**
-     * Retrieves translation of a word or a sentence.
-     * Tests have shown that the method's average latency is ~1000ms
-     * Note: voice is currently available for English and Russian texts.
-     * @public
-     * @param {string} text word/phrase/sentence in source language
-     * @param {string} from source language of the text. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
-     * @param {string} to target language of examples you need. Available languages: English, Russian, German, Spanish, French, Italian, Polish.
-     */
-    async getTranslation(text, from, to) {
-        checkTranslationLang(from, to);
-
-        const language = {
-            english: 'eng',
-            french: 'fra',
-            german: 'ger',
-            russian: 'rus',
-            italian: 'ita',
-            polish: 'pol',
-            spanish: 'spa',
-        };
-
-        const voice = {
-            english: 'Heather22k',
-            french: 'Alice22k',
-            german: 'Claudia22k',
-            russian: 'Alyona22k',
-            italian: 'Chiara22k',
-            polish: 'Ania22k',
-            spanish: 'Ines22k',
-        };
-
-        const result = await axios.post(urls.translation, {
-            format: 'text',
-            from: language[from.toLowerCase()],
-            input: text,
-            options: {
-                contextResults: true,
-                languageDetection: true,
-                origin: 'reversomobile',
-                sentenceSplitter: false,
-            },
-            to: language[to.toLowerCase()],
-            headers: {
-                Accept: '*/*',
-                Connection: 'keep-alive',
-                'User-Agent': randomUseragent.getRandom(),
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            const textToVoice = Buffer.from(response.data.translation[0]).toString('base64');
-            const condition = voice[to.toLowerCase()] != undefined && response.data.translation[0].length <= 150;
-
-            const contextExamples = [];
-
-            if (response.data.contextResults == null || response.data.contextResults.results.length <= 0) {
-                return {
-                    text: text,
-                    from: response.data.from,
-                    to: response.data.to,
-                    translation: response.data.translation,
-                    context: {
-                        examples: 'no context examples',
-                        rude: 'not defined',
-                    },
-                    detected_language: response.data.languageDetection.detectedLanguage,
-                    voice: condition ? `${urls.voice}voiceName=${voice[to.toLowerCase()]}?inputText=${textToVoice}` : false,
-                };
-            } else {
-                let sourceExamples = response.data.contextResults.results[0].sourceExamples;
-                let targetExamples = response.data.contextResults.results[0].targetExamples;
-
-                for (let i = 0; i < sourceExamples.length; i++) {
-                    contextExamples.push({
-                        from: sourceExamples[i].replace(/<[^>]*>/gi, ''),
-                        to: targetExamples[i].replace(/<[^>]*>/gi, ''),
-                        phrase_from: [...sourceExamples[i].matchAll(/<em>(.*?)<\/em>/g)][0][1],
-                        phrase_to: [...targetExamples[i].matchAll(/<em>(.*?)<\/em>/g)][0][1]
+            const is_correct_language = await checkLanguage('context', from_language, to_language).catch(err => err);
+            if (is_correct_language?.error) return reject({ method: 'getContext', ...is_correct_language });
+            
+            axios({
+                method: 'GET',
+                url: constants.CONTEXT_URL + from_language + '-' + to_language + '/' + encodeURIComponent(text),
+                headers: {
+                    Accept          : '*/*',
+                    Connection      : 'keep-alive',
+                    'User-Agent'    : randomUseragent.getRandom()
+                }
+            }).then(response => {
+                const $ = cheerio.load(response.data);
+                const examples = [];
+                const translation = [];
+    
+                const from_example = $('body').find('.example').find('div[class="src ltr"] > span[class="text"]').text().trim().split('\n');
+                const to_example = $('body').find('.example').find('div[class="trg ltr"] > span[class="text"]').text().trim().split('\n');
+                const to_translation = $('body').find('div[id="translations-content"]').text().split('\n');
+    
+                for (let i = 0; i < from_example.length; i++) {
+                    examples.push({
+                        id: i,
+                        from: from_example[i].trimStart(),
+                        to: to_example[i].trimStart(),
                     });
                 }
+    
+                to_translation.forEach(e => {
+                    let string = e.trim();
+                    if (string.length <= 0) return;
+                    translation.push(e.trim());
+                });
 
-                return {
-                    text: text,
-                    from: response.data.from,
-                    to: response.data.to,
-                    translation: response.data.translation,
-                    context: {
-                        examples: contextExamples,
-                        rude: response.data.contextResults.results[0].rude,
+                if (typeof callback === 'function') {
+                    callback({
+                        text: text,
+                        from: from,
+                        to: to,
+                        translation: translation.filter(e => e != text),
+                        examples: examples
+                    });
+                } else {
+                    resolve({
+                        text: text,
+                        from: from,
+                        to: to,
+                        translation: translation.filter(e => e != text),
+                        examples: examples
+                    });
+                }
+            }).catch(err => {
+                reject({ method: 'getContext', error: err });
+            });
+        });
+    }
+
+    /**
+     * The same as spell checker on reverso.net
+     * @param {String} text Your query.
+     * @param {String} from Available languages: English and French.
+     * @param {Function} callback Your callback function. Not important.
+     * @returns An array with data objects or an object with error(s).
+     */
+    getSpellCheck(text, from, callback) {
+        return new Promise(async (resolve, reject) => {
+            const from_language = from.toLowerCase();
+
+            const is_correct_language = await checkLanguage('spell', from_language).catch(err => err);
+            if (is_correct_language?.error) return reject({ method: 'getSpellCheck', ...is_correct_language });
+
+            const languages = {
+                english: 'eng',
+                french: 'fra',
+            };
+
+            axios({
+                method: 'GET',
+                url: constants.SPELLCHECK_URL + '?text=' + encodeURIComponent(text) +'&language=' + languages[from_language] + '&getCorrectionDetails=true',
+                headers: {
+                    Accept          : '*/*',
+                    Connection      : 'keep-alive',
+                    'User-Agent'    : randomUseragent.getRandom()
+                }
+            }).then(response => {
+                const data = response.data;
+                const result = [];
+
+                for (let i = 0; i < data.corrections.length; i++) {
+                    result.push({
+                        id: i,
+                        text: text,
+                        type: data.corrections[i].type,
+                        explanation: data.corrections[i].longDescription,
+                        corrected: data.corrections[i].correctionText,
+                        full_corrected: data.text,
+                    });
+                }
+                
+                if (typeof callback === 'function') {
+                    callback(result);
+                } else {
+                    resolve(result);
+                }
+            }).catch(err => {
+                reject({ method: 'getSpellCheck', error: err });
+            });
+        });
+    }
+
+    /**
+     * The same as synonyms feature on reverso.net
+     * @param {String} text Your query.
+     * @param {String} from Available languages: English, Russian, German, Spanish, French, Italian, Polish.
+     * @param {Function} callback Available languages: English, Russian, German, Spanish, French, Italian, Polish.
+     * @returns An object with data or an object with error(s).
+     */
+    getSynonyms(text, from, callback) {
+        return new Promise(async (resolve, reject) => {
+            const from_language = from.toLowerCase();
+
+            const is_correct_language = await checkLanguage('synonym', from_language).catch(err => err);
+            if (is_correct_language?.error) return reject({ method: 'getSynonyms', ...is_correct_language });
+
+            const languages = {
+                english: 'en',
+                french: 'fr',
+                german: 'de',
+                russian: 'ru',
+                italian: 'it',
+                polish: 'pl',
+                spanish: 'es',
+            };
+
+            axios({
+                method: 'GET',
+                url: constants.SYNONYMS_URL + languages[from_language] + '/' + encodeURIComponent(text),
+                headers: {
+                    Accept          : '*/*',
+                    Connection      : 'keep-alive',
+                    'User-Agent'    : randomUseragent.getRandom()
+                }
+            }).then(response => {
+                const $ = cheerio.load(response.data);
+                const synonyms = [];
+
+                $('body').find(`a[class="synonym  relevant"]`).each((i, e) => {
+                    synonyms.push({
+                        id: i,
+                        synonym: $(e).text(),
+                    });
+                });
+
+                if (typeof callback === 'function') {
+                    callback({
+                        text: text,
+                        from: from_language,
+                        synonyms: synonyms,
+                    });
+                } else {
+                    resolve({
+                        text: text,
+                        from: from_language,
+                        synonyms: synonyms,
+                    });
+                }
+            }).catch(err => {
+                reject({ method: 'getSynonyms', error: err });
+            });
+        });
+    }
+
+    /**
+     * The same as translation feature on reverso.net
+     * @param {String} text Your query.
+     * @param {String} from Available languages: English, Russian, German, Spanish, French, Italian, Polish.
+     * @param {String} to Available languages: English, Russian, German, Spanish, French, Italian, Polish.
+     * @param {Function} callback Your callback function. Not important.
+     * @returns An object with data or an object with error(s).
+     */
+    getTranslation(text, from, to, callback) {
+        return new Promise(async (resolve, reject) => {
+            const from_language = from.toLowerCase();
+            const to_language = to.toLowerCase();
+
+            const is_correct_language = await checkLanguage('translation', from_language, to_language).catch(err => err);
+            if (is_correct_language?.error) return reject({ method: 'getTranslation', ...is_correct_language });
+
+            const languages = {
+                english: 'eng',
+                french: 'fra',
+                german: 'ger',
+                russian: 'rus',
+                italian: 'ita',
+                polish: 'pol',
+                spanish: 'spa',
+            };
+    
+            const voices = {
+                english: 'Heather22k',
+                french: 'Alice22k',
+                german: 'Claudia22k',
+                russian: 'Alyona22k',
+                italian: 'Chiara22k',
+                polish: 'Ania22k',
+                spanish: 'Ines22k',
+            };
+
+            axios({
+                method: 'POST',
+                url: constants.TRANSLATION_URL,
+                headers: {
+                    Accept          : '*/*',
+                    Connection      : 'keep-alive',
+                    'User-Agent'    : randomUseragent.getRandom(),
+                    'Content-Type'  : 'application/json'
+                },
+                data: {
+                    format: 'text',
+                    from: languages[from_language],
+                    input: text,
+                    options: {
+                        contextResults: true,
+                        languageDetection: true,
+                        origin: 'reversomobile',
+                        sentenceSplitter: false,
                     },
-                    detected_language: response.data.languageDetection.detectedLanguage,
-                    voice: condition ? `${urls.voice}voiceName=${voice[to.toLowerCase()]}?inputText=${textToVoice}` : false,
-                };
-            }
-        }).catch(console.error);
+                    to: languages[to_language],
+                }
+            }).then(response => {
+                const text_to_voice = Buffer.from(response.data.translation[0]).toString('base64');
+                const condition = voices[to_language] != undefined && response.data.translation[0].length <= 150;
+                
+                if (response.data?.contextResults?.results) {
+                    const context_examples = [];
 
-        return result;
+                    const source_examples = response.data.contextResults.results[0].sourceExamples;
+                    const target_examples = response.data.contextResults.results[0].targetExamples;
+    
+                    for (let i = 0; i < source_examples.length; i++) {
+                        context_examples.push({
+                            from: source_examples[i].replace(/<[^>]*>/gi, ''),
+                            to: target_examples[i].replace(/<[^>]*>/gi, ''),
+                            phrase_from: [...source_examples[i].matchAll(/<em>(.*?)<\/em>/g)][0][1],
+                            phrase_to: [...target_examples[i].matchAll(/<em>(.*?)<\/em>/g)][0][1]
+                        });
+                    }
+
+                    if (typeof callback === 'function') {
+                        callback({
+                            text: text,
+                            from: from_language,
+                            to: to_language,
+                            translation: response.data.translation,
+                            context: {
+                                examples: context_examples,
+                                rude: response.data.contextResults.results[0].rude,
+                            },
+                            detected_language: response.data.languageDetection.detectedLanguage,
+                            voice: condition ? `${constants.VOICE_URL}voiceName=${voices[to_language]}?inputText=${text_to_voice}` : null,
+                        });
+                    } else {
+                        resolve({
+                            text: text,
+                            from: from_language,
+                            to: to_language,
+                            translation: response.data.translation,
+                            context: {
+                                examples: context_examples,
+                                rude: response.data.contextResults.results[0].rude,
+                            },
+                            detected_language: response.data.languageDetection.detectedLanguage,
+                            voice: condition ? `${constants.VOICE_URL}voiceName=${voices[to_language]}?inputText=${text_to_voice}` : null,
+                        });
+                    }
+                } else {
+                    if (typeof callback === 'function') {
+                        callback({
+                            text: text,
+                            from: from_language,
+                            to: to_language,
+                            translation: response.data.translation,
+                            context: null,
+                            detected_language: response.data.languageDetection.detectedLanguage,
+                            voice: condition ? `${constants.VOICE_URL}voiceName=${voices[to_language]}?inputText=${text_to_voice}` : null,
+                        });
+                    } else {
+                        resolve({
+                            text: text,
+                            from: from_language,
+                            to: to_language,
+                            translation: response.data.translation,
+                            context: null,
+                            detected_language: response.data.languageDetection.detectedLanguage,
+                            voice: condition ? `${constants.VOICE_URL}voiceName=${voices[to_language]}?inputText=${text_to_voice}` : null,
+                        });
+                    }
+                }
+            }).catch(err => {
+                reject({ method: 'getTranslation', error: err });
+            });
+        });
     }
 };

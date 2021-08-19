@@ -1,7 +1,8 @@
 /*
- * Unofficial Reverso API (promise based).
- * This API lets you to do lots of things with you text. You can find any word/phrase/sentence's
- * context usage in available languages, find any word's synonyms and check your text's spelling.
+ * Unofficial Reverso API (promise-based).
+ * The API allows you to manipulate with your text in different ways.
+ * Almost all the features from the website are supported by this API.
+ * Currently supported: context, translation, spell check, synonyms.
  * 
  * Source: reverso.net
  * Author: github.com/s0ftik3

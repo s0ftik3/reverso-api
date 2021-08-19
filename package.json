@@ -6,7 +6,8 @@
   "homepage": "https://github.com/s0ftik3/reverso-api#readme",
   "repository": "https://github.com/s0ftik3/reverso-api",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "mocha"
   },
   "keywords": [
     "reverso",
@@ -16,7 +17,7 @@
     "spell checker reverso",
     "synonyms reverso"
   ],
-  "author": "softik",
+  "author": "Vyacheslav <slava021323@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "axios": "^0.21.1",
