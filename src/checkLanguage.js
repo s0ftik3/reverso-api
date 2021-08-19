@@ -31,7 +31,7 @@ module.exports = (method = null, from_language = null, to_language = null) => {
 
                     break;
                 case 'synonym':
-                    const synonym_languages = require('./languages/synonym');
+                    const synonym_languages = require('./languages/synonyms');
 
                     if (synonym_languages.includes(from_language)) {
                         resolve(true);
