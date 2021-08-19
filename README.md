@@ -52,7 +52,7 @@ reverso.getContext('meet me half way', 'English', 'Russian', (response) => {
 ```
 
 Response:
-```json
+```
 {
     text: String,
     from: String,
@@ -70,7 +70,7 @@ Response:
 ```
 
 Error:
-```json
+```
 { method: String, error: String }
 ```
 
@@ -86,7 +86,7 @@ reverso.getSpellCheck('helo', 'English', (response) => {
 ```
 
 Response:
-```json
+```
 [
     {
         id: Number,
@@ -100,7 +100,7 @@ Response:
 ```
 
 Error:
-```json
+```
 { method: String, error: String }
 ```
 
@@ -116,7 +116,7 @@ reverso.getSynonyms('dzień dobry', 'Polish', (response) => {
 ```
 
 Response:
-```json
+```
 {
     text: String,
     from: String,
@@ -128,7 +128,7 @@ Response:
 ```
 
 Error:
-```json
+```
 { method: String, error: String }
 ```
 
@@ -145,7 +145,7 @@ reverso.getTranslation('Hello', 'English', 'French', (response) => {
 ```
 
 Response:
-```json
+```
 {
     text: String,
     from: String,
@@ -169,7 +169,7 @@ Response:
 ```
 
 Error:
-```json
+```
 { method: String, error: String }
 ```
 
