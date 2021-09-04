@@ -14,7 +14,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const randomUseragent = require('random-useragent');
 const constants = require('./constants');
-const checkLanguage = require('./checkLanguage');
+const checkLanguage = require('./utils/checkLanguage');
 
 module.exports = class Reverso {
     /**
@@ -92,7 +92,7 @@ module.exports = class Reverso {
      * @param {String} text Your query.
      * @param {String} from Available languages: English and French.
      * @param {Function} callback Your callback function. Not important.
-     * @returns An array with data objects or an object with error(s).
+     * @returns {Promise <Array>} An array with data objects or an object with error(s).
      */
     getSpellCheck(text, from, callback) {
         return new Promise(async (resolve, reject) => {
@@ -219,23 +219,19 @@ module.exports = class Reverso {
             if (is_correct_language?.error) return reject({ method: 'getTranslation', ...is_correct_language });
 
             const languages = {
-                english: 'eng',
-                french: 'fra',
-                german: 'ger',
-                russian: 'rus',
-                italian: 'ita',
-                polish: 'pol',
-                spanish: 'spa',
+                arabic: 'ara', german: 'ger', spanish: 'spa', 
+                french: 'fra', hebrew: 'heb', italian: 'ita', 
+                japanese: 'jpn', dutch: 'dut', polish: 'pol', 
+                portuguese: 'por', romanian: 'rum', russian: 'rus',
+                turkish: 'tur', chinese: 'chi', english: 'eng'
             };
     
             const voices = {
-                english: 'Heather22k',
-                french: 'Alice22k',
-                german: 'Claudia22k',
-                russian: 'Alyona22k',
-                italian: 'Chiara22k',
-                polish: 'Ania22k',
-                spanish: 'Ines22k',
+                arabic: 'Mehdi22k', german: 'Claudia22k', spanish: 'Ines22k', 
+                french: 'Alice22k', hebrew: 'he-IL-Asaf', italian: 'Chiara22k', 
+                japanese: 'Sakura22k', dutch: 'Femke22k', polish: 'Ania22k', 
+                portuguese: 'Celia22k', romanian: 'ro-RO-Andrei', russian: 'Alyona22k',
+                turkish: 'Ipek22k', chinese: 'Lulu22k', english: 'Heather22k'
             };
 
             axios({
@@ -289,7 +285,7 @@ module.exports = class Reverso {
                                 rude: response.data.contextResults.results[0].rude,
                             },
                             detected_language: response.data.languageDetection.detectedLanguage,
-                            voice: condition ? `${constants.VOICE_URL}voiceName=${voices[to_language]}?inputText=${text_to_voice}` : null,
+                            voice: condition ? `${constants.VOICE_URL}voiceName=${voices[to_language]}?inputText=${text_to_voice}` : null
                         });
                     } else {
                         resolve({
@@ -302,7 +298,7 @@ module.exports = class Reverso {
                                 rude: response.data.contextResults.results[0].rude,
                             },
                             detected_language: response.data.languageDetection.detectedLanguage,
-                            voice: condition ? `${constants.VOICE_URL}voiceName=${voices[to_language]}?inputText=${text_to_voice}` : null,
+                            voice: condition ? `${constants.VOICE_URL}voiceName=${voices[to_language]}?inputText=${text_to_voice}` : null
                         });
                     }
                 } else {
@@ -314,7 +310,7 @@ module.exports = class Reverso {
                             translation: response.data.translation,
                             context: null,
                             detected_language: response.data.languageDetection.detectedLanguage,
-                            voice: condition ? `${constants.VOICE_URL}voiceName=${voices[to_language]}?inputText=${text_to_voice}` : null,
+                            voice: condition ? `${constants.VOICE_URL}voiceName=${voices[to_language]}?inputText=${text_to_voice}` : null
                         });
                     } else {
                         resolve({
@@ -324,7 +320,7 @@ module.exports = class Reverso {
                             translation: response.data.translation,
                             context: null,
                             detected_language: response.data.languageDetection.detectedLanguage,
-                            voice: condition ? `${constants.VOICE_URL}voiceName=${voices[to_language]}?inputText=${text_to_voice}` : null,
+                            voice: condition ? `${constants.VOICE_URL}voiceName=${voices[to_language]}?inputText=${text_to_voice}` : null
                         });
                     }
                 }

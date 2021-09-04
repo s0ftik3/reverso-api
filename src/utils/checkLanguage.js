@@ -8,20 +8,18 @@
  * Author: github.com/s0ftik3
  */
 
+const checkCompatibility = require('./checkCompatibility');
+
 module.exports = (method = null, from_language = null, to_language = null) => {
     return new Promise((resolve, reject) => {
-        if (method === null) return reject({ error: 'Method param must be filled.' });
+        if (method === null) return reject({ error: 'Method\'s param must be filled.' });
         if (from_language === null) return reject({ error: 'From language param must be filled.' });
+        if (typeof from_language !== 'string') return reject({ error: 'Incorrect the first language param\'s type. Must be type of string.' });
 
         if (to_language === null) {
-            if (typeof from_language !== 'string') {
-                reject({ error: 'Incorrect param\'s type. Must be type of string.' });
-                return;
-            }
-
             switch(method) {
                 case 'spell':
-                    const spell_languages = require('./languages/spell');
+                    const spell_languages = require('../languages/spell');
 
                     if (spell_languages.includes(from_language)) {
                         resolve(true);
@@ -31,7 +29,7 @@ module.exports = (method = null, from_language = null, to_language = null) => {
 
                     break;
                 case 'synonym':
-                    const synonym_languages = require('./languages/synonyms');
+                    const synonym_languages = require('../languages/synonyms');
 
                     if (synonym_languages.includes(from_language)) {
                         resolve(true);
@@ -41,38 +39,42 @@ module.exports = (method = null, from_language = null, to_language = null) => {
 
                     break;
                 default:
-                    reject({ error: 'Incorrect method name.' });
+                    reject({ error: 'Incorrect method\'s name.' });
                     break;
             }
         } else {
             if (typeof from_language !== 'string' && typeof to_language !== 'string') {
-                reject({ error: 'Incorrect params\' type. Must be type of string.' });
+                reject({ error: 'Incorrect the second langauge params\' type. Must be type of string.' });
                 return;
             }
 
             switch(method) {
                 case 'context':
-                    const context_languages = require('./languages/context');
+                    const context_languages = require('../languages/context');
 
                     if (context_languages.includes(from_language) && context_languages.includes(to_language)) {
-                        resolve(true);
+                        checkCompatibility('context', from_language, to_language)
+                            .then(() => resolve(true))
+                            .catch(err => reject(err));
                     } else {
                         reject({ error: 'Incorrect languages specified.' });
                     }
 
                     break;
                 case 'translation':
-                    const translation_languages = require('./languages/translation');
+                    const translation_languages = require('../languages/translation');
 
                     if (translation_languages.includes(from_language) && translation_languages.includes(to_language)) {
-                        resolve(true);
+                        checkCompatibility('translation', from_language, to_language)
+                            .then(() => resolve(true))
+                            .catch(err => reject(err));
                     } else {
                         reject({ error: 'Incorrect languages specified.' });
                     }
 
                     break;
                 default:
-                    reject({ error: 'Incorrect method name.' });
+                    reject({ error: 'Incorrect method\'s name.' });
                     break;
             }
         }

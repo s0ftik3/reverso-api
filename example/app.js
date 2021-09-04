@@ -33,7 +33,7 @@ reverso.getSynonyms('dzień dobry', 'Polish', (response) => {
 });
 
 // getTranslation method example
-reverso.getTranslation('Hello', 'English', 'French', (response) => {
+reverso.getTranslation('how is going?', 'English', 'Chinese', (response) => {
     console.log(response);
 }).catch(err => {
     console.error(err);

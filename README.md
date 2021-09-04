@@ -1,5 +1,11 @@
-# (Unofficial) Reverso API
-The API allows you to manipulate with your text in different ways. Almost all the features from the website are supported by this API. Currently supported: context, translation, spell check, synonyms.
+# Reverso API
+[![version](https://badgen.net/npm/v/reverso-api)](https://npmjs.com/package/reverso-api)
+[![downloads](https://badgen.net/npm/dm/reverso-api)](https://www.npmjs.com/package/reverso-api)
+[![telegram chat](https://img.shields.io/badge/Ask%20a%20Question-Telegram-blue)](https://t.me/reversoapi)
+
+[![logotype](/assets/reversoapi-logo.png)](https://npmjs.com/package/reverso-api)
+
+First of all, this API `is not official`! The API allows you to manipulate with your text in different ways. Almost all the features from the website are supported by this API. Currently supported: context, translation, spell check, synonyms.
 
 ## Navigation
 - [Installing](#installing)
@@ -74,7 +80,7 @@ Error:
 { method: String, error: String }
 ```
 
-_Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish, Chinese._
+_Available languages for this method: English, Arabic, German, Spanish, French, Hebrew, Italian, Japanese, Dutch, Polish, Portuguese, Romanian, Russian, Turkish, Chinese._
 
 ### `getSpellCheck`
 ```javascript
@@ -135,9 +141,9 @@ Error:
 _Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
 
 ### `getTranslation`
-> **WARNING:** eventually, your server's IP address might get banned by Reverso moderators and you won't receive any data.
+> ⚠️ **WARNING:** eventually, your server's IP address might get banned by Reverso moderators and you won't receive any data.
 ```javascript
-reverso.getTranslation('Hello', 'English', 'French', (response) => {
+reverso.getTranslation('how is going?', 'English', 'Chinese', (response) => {
     console.log(response);
 }).catch(err => {
     console.error(err);
@@ -173,8 +179,9 @@ Error:
 { method: String, error: String }
 ```
 
-_Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
+_Available languages for this method: English, Arabic, German, Spanish, French, Hebrew, Italian, Japanese, Dutch, Polish, Portuguese, Romanian, Russian, Turkish, Chinese._
 
 ### Credits
 * All the data is fetched from [reverso.net](https://reverso.net).
 * Author of the API [@vychs](https://t.me/vychs).
+* Want to talk about the API? Join our [Telegram chat](https://t.me/reversoapi).

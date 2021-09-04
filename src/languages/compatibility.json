@@ -1,0 +1,266 @@
+[
+    {
+        "method": "context",
+        "language": [
+            { 
+                "name": "english", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "polish", "portuguese", "romanian", "russian", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "arabic", 
+                "compatible_with": [
+                    "english", "german", "spanish", "french", 
+                    "hebrew", "italian", "portuguese", "russian", 
+                    "turkish"
+                ]
+            },
+            { 
+                "name": "german", 
+                "compatible_with": [
+                    "arabic", "english", "spanish", "french", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "polish", "portuguese", "romanian", "russian", 
+                    "turkish"
+                ]
+            },
+            { 
+                "name": "spanish", 
+                "compatible_with": [
+                    "arabic", "german", "english", "french", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "polish", "portuguese", "romanian", "russian", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "french", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "english", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "polish", "portuguese", "romanian", "russian", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "hebrew", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "english", "italian", "dutch", "portuguese",
+                    "russian"
+                ]
+            },
+            { 
+                "name": "italian", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "hebrew", "english", "japanese", "dutch", 
+                    "polish", "portuguese", "romanian", "russian", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "japanese", 
+                "compatible_with": [
+                    "german", "spanish", "french", "italian",
+                    "english", "portuguese", "russian"
+                ]
+            },
+            { 
+                "name": "dutch", 
+                "compatible_with": [
+                    "german", "spanish", "french", "hebrew",
+                    "italian", "english", "portuguese", "russian"
+                ]
+            },
+            { 
+                "name": "polish", 
+                "compatible_with": [
+                    "german", "spanish", "french", "italian", 
+                    "english"
+                ]
+            },
+            { 
+                "name": "portuguese", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "english", "russian", "turkish"
+                ]
+            },
+            { 
+                "name": "romanian", 
+                "compatible_with": [
+                    "german", "spanish", "french", 
+                    "italian", "english", "turkish"
+                ]
+            },
+            { 
+                "name": "russian", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "portuguese", "english"
+                ]
+            },
+            { 
+                "name": "turkish", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "italian", "portuguese", "romanian",
+                    "english"
+                ]
+            },
+            { 
+                "name": "chinese", 
+                "compatible_with": [
+                    "english", "spanish", "french"
+                ]
+            }
+        ]
+    },
+    {
+        "method": "translation",
+        "language": [
+            { 
+                "name": "english", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "polish", "portuguese", "romanian", "russian", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "arabic", 
+                "compatible_with": [
+                    "english", "german", "spanish", "french", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "polish", "portuguese", "romanian", "russian", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "german", 
+                "compatible_with": [
+                    "arabic", "english", "spanish", "french", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "polish", "portuguese", "romanian", "russian", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "spanish", 
+                "compatible_with": [
+                    "arabic", "german", "english", "french", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "polish", "portuguese", "romanian", "russian", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "french", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "english", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "polish", "portuguese", "romanian", "russian", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "hebrew", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "english", "italian", "japanese", "dutch", 
+                    "polish", "portuguese", "romanian", "russian", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "italian", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "hebrew", "english", "japanese", "dutch", 
+                    "polish", "portuguese", "romanian", "russian", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "japanese", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "hebrew", "italian", "english", "dutch", 
+                    "polish", "portuguese", "romanian", "russian", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "dutch", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "hebrew", "italian", "japanese", "english", 
+                    "polish", "portuguese", "romanian", "russian", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "polish", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "english", "portuguese", "romanian", "russian", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "portuguese", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "polish", "english", "romanian", "russian", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "romanian", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "polish", "portuguese", "english", "russian", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "russian", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "polish", "portuguese", "romanian", "english", 
+                    "turkish", "chinese"
+                ]
+            },
+            { 
+                "name": "turkish", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "polish", "portuguese", "romanian", "russian", 
+                    "english", "chinese"
+                ]
+            },
+            { 
+                "name": "chinese", 
+                "compatible_with": [
+                    "arabic", "german", "spanish", "french", 
+                    "hebrew", "italian", "japanese", "dutch", 
+                    "polish", "portuguese", "romanian", "russian", 
+                    "turkish", "english"
+                ]
+            }
+        ]
+    }
+]
