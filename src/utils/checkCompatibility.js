@@ -8,6 +8,8 @@
  * Author: github.com/s0ftik3
  */
 
+'use-strict';
+
 const compatibility = require('../languages/compatibility.json');
 
 module.exports = (method = null, from_language = null, to_language = null) => {

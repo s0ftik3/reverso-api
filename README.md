@@ -5,7 +5,7 @@
 
 [![logotype](/assets/reversoapi-logo.png)](https://npmjs.com/package/reverso-api)
 
-First of all, this API `is not official`! The API allows you to manipulate with your text in different ways. Almost all the features from the website are supported by this API. Currently supported: context, translation, spell check, synonyms.
+This API is not official! It allows you to manipulate with your text in different ways. Almost all the features from the website are supported by this API. Currently supported: context, translation, spell check, synonyms.
 
 ## Navigation
 - [Installing](#installing)
@@ -15,11 +15,12 @@ First of all, this API `is not official`! The API allows you to manipulate with 
     - [getSpellCheck](#getspellcheck)
     - [getSynonyms](#getsynonyms)
     - [getTranslation](#gettranslation)
+- [Languages](#languages)
 - [Credits](#credits)
 
 ## Installing
 ```bash
-$ npm install reverso-api
+$ npm i reverso-api
 ```
 
 ## Usage
@@ -30,7 +31,7 @@ const reverso = new Reverso();
 Congrats! You can use all the available methods now.\
 Let's read through the README and find out how the things work.
 
-Remember, you can pass either callback function...
+You can pass either callback function...
 ```javascript
 reverso.getContext(...params, (response) => {
     ...
@@ -45,20 +46,20 @@ reverso.getContext(...params).then((response) => {
 });
 ```
 
-All the examples below will be given using callback function.
+All the examples below are given using callback function.
 
 ## Examples
-### `getContext`
+- ### `getContext`
 ```javascript
 reverso.getContext('meet me half way', 'English', 'Russian', (response) => {
     console.log(response);
-}).catch(err => {
+}).catch((err) => {
     console.error(err);
 });
 ```
 
 Response:
-```
+```javascript
 {
     text: String,
     from: String,
@@ -76,23 +77,21 @@ Response:
 ```
 
 Error:
-```
+```javascript
 { method: String, error: String }
 ```
 
-_Available languages for this method: English, Arabic, German, Spanish, French, Hebrew, Italian, Japanese, Dutch, Polish, Portuguese, Romanian, Russian, Turkish, Chinese._
-
-### `getSpellCheck`
+- ### `getSpellCheck`
 ```javascript
 reverso.getSpellCheck('helo', 'English', (response) => {
     console.log(response);
-}).catch(err => {
+}).catch((err) => {
     console.error(err);
 });
 ```
 
 Response:
-```
+```javascript
 [
     {
         id: Number,
@@ -106,23 +105,21 @@ Response:
 ```
 
 Error:
-```
+```javascript
 { method: String, error: String }
 ```
 
-_Available languages for this method: English and French._
-
-### `getSynonyms`
+- ### `getSynonyms`
 ```javascript
 reverso.getSynonyms('dzień dobry', 'Polish', (response) => {
     console.log(response);
-}).catch(err => {
+}).catch((err) => {
     console.error(err);
 });
 ```
 
 Response:
-```
+```javascript
 {
     text: String,
     from: String,
@@ -134,24 +131,22 @@ Response:
 ```
 
 Error:
-```
+```javascript
 { method: String, error: String }
 ```
 
-_Available languages for this method: English, Russian, German, Spanish, French, Italian, Polish._
-
-### `getTranslation`
+- ### `getTranslation`
 > ⚠️ **WARNING:** eventually, your server's IP address might get banned by Reverso moderators and you won't receive any data.
 ```javascript
 reverso.getTranslation('how is going?', 'English', 'Chinese', (response) => {
     console.log(response);
-}).catch(err => {
+}).catch((err) => {
     console.error(err);
 });
 ```
 
 Response:
-```
+```javascript
 {
     text: String,
     from: String,
@@ -175,13 +170,16 @@ Response:
 ```
 
 Error:
-```
+```javascript
 { method: String, error: String }
 ```
 
-_Available languages for this method: English, Arabic, German, Spanish, French, Hebrew, Italian, Japanese, Dutch, Polish, Portuguese, Romanian, Russian, Turkish, Chinese._
+## Languages
+`getContext` & `getTranslation`: English, Arabic, German, Spanish, French, Hebrew, Italian, Japanese, Dutch, Polish, Portuguese, Romanian, Russian, Turkish, Chinese. \
+`getSynonyms`: English, Russian, German, Spanish, French, Italian, Polish. \
+`getSpellCheck`: English, French
 
-### Credits
-* All the data is fetched from [reverso.net](https://reverso.net).
-* Author of the API [@vychs](https://t.me/vychs).
+## Credits
+* All data is provided by [reverso.net](https://reverso.net).
+* Author on Telegram [@vychs](https://t.me/vychs).
 * Want to talk about the API? Join our [Telegram chat](https://t.me/reversoapi).

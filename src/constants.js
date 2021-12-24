@@ -9,9 +9,9 @@
  */
 
 module.exports = {
-    "CONTEXT_URL"       : "https://context.reverso.net/translation/",
-    "SPELLCHECK_URL"    : "https://orthographe.reverso.net/api/v1/Spelling",
-    "SYNONYMS_URL"      : "https://synonyms.reverso.net/synonym/",
-    "TRANSLATION_URL"   : "https://api.reverso.net/translate/v1/translation",
-    "VOICE_URL"         : "https://voice.reverso.net/RestPronunciation.svc/v1/output=json/GetVoiceStream/"
+    "CONTEXT_URL"     : "https://context.reverso.net/translation/",
+    "SPELLCHECK_URL"  : "https://orthographe.reverso.net/api/v1/Spelling",
+    "SYNONYMS_URL"    : "https://synonyms.reverso.net/synonym/",
+    "TRANSLATION_URL" : "https://api.reverso.net/translate/v1/translation",
+    "VOICE_URL"       : "https://voice.reverso.net/RestPronunciation.svc/v1/output=json/GetVoiceStream/"
 };
