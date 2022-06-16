@@ -311,6 +311,7 @@ module.exports = class Reverso {
                 portuguese: 'por',
                 romanian: 'rum',
                 russian: 'rus',
+                ukrainian: 'ukr',
                 turkish: 'tur',
                 chinese: 'chi',
                 english: 'eng',
