@@ -1,31 +1,32 @@
 {
-  "name": "reverso-api",
-  "version": "2.19.2",
-  "description": "Unofficial Reverso API",
-  "main": "index.js",
-  "homepage": "https://github.com/s0ftik3/reverso-api#readme",
-  "repository": "https://github.com/s0ftik3/reverso-api",
-  "scripts": {
-    "start": "node index.js",
-    "test": "mocha"
-  },
-  "keywords": [
-    "reverso",
-    "reverso api",
-    "reverso js",
-    "context reverso",
-    "spell checker reverso",
-    "synonyms reverso"
-  ],
-  "author": "Vyacheslav <slava021323@gmail.com>",
-  "license": "MIT",
-  "dependencies": {
-    "axios": "^0.21.1",
-    "cheerio": "^1.0.0-rc.5",
-    "random-useragent": "^0.5.0"
-  },
-  "devDependencies": {
-    "chai": "^4.3.4",
-    "mocha": "^9.0.3"
-  }
+    "name": "reverso-api",
+    "version": "2.20.0",
+    "type": "module",
+    "description": "Unofficial Reverso API",
+    "main": "index.js",
+    "homepage": "https://github.com/s0ftik3/reverso-api#readme",
+    "repository": "https://github.com/s0ftik3/reverso-api",
+    "scripts": {
+        "start": "node index.js",
+        "test": "node example/app.js",
+        "prettier": "npx prettier --write ."
+    },
+    "keywords": [
+        "reverso",
+        "reverso api",
+        "reverso js",
+        "context reverso",
+        "spell checker reverso",
+        "synonyms reverso"
+    ],
+    "author": "Vyacheslav <slava021323@gmail.com>",
+    "license": "MIT",
+    "dependencies": {
+        "axios": "^0.21.1",
+        "cheerio": "^1.0.0-rc.5",
+        "random-useragent": "^0.5.0"
+    },
+    "devDependencies": {
+        "prettier": "^2.7.1"
+    }
 }

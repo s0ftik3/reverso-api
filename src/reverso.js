@@ -1,472 +1,419 @@
-/*
- * Unofficial Reverso API (promise-based).
- * The API allows you to manipulate with your text in different ways.
- * Almost all the features from the website are supported by this API.
- * Currently supported: context, translation, spell check, synonyms.
- *
- * Source: reverso.net
- * Author: github.com/s0ftik3
- */
+import axios from 'axios'
+import available from './languages/available.js'
+import compatibility from './languages/compatibility.js'
+import { getRandom } from 'random-useragent'
+import { Languages } from './entities/languages.js'
+import { load } from 'cheerio'
 
-'use-strict';
+axios.interceptors.request.use(
+    (config) => {
+        config.headers['Accept'] = '*/*'
+        config.headers['Connection'] = 'keep-alive'
+        config.headers['User-Agent'] = getRandom()
 
-const axios = require('axios');
-const cheerio = require('cheerio');
-const randomUseragent = require('random-useragent');
-const constants = require('./constants');
-const checkLanguage = require('./utils/checkLanguage');
+        return config
+    },
+    (error) => {
+        return Promise.reject(error)
+    }
+)
 
-module.exports = class Reverso {
-    /**
-     * The same as context feature on reverso.net
-     * @param {String} text Your query.
-     * @param {String} from Available languages: English, Russian, German, Spanish, French, Italian, Polish, Chinese.
-     * @param {String} to Available languages: English, Russian, German, Spanish, French, Italian, Polish, Chinese.
-     * @param {Function} callback Your callback function. Not important.
-     * @returns An object with data or an object with error(s).
-     */
-    getContext(text, from, to, callback) {
-        return new Promise(async (resolve, reject) => {
-            const from_language = from.toLowerCase();
-            const to_language = to.toLowerCase();
-
-            const is_correct_language = await checkLanguage(
-                'context',
-                from_language,
-                to_language,
-            ).catch((err) => err);
-            if (is_correct_language?.error)
-                return reject({ method: 'getContext', ...is_correct_language });
-
-            axios({
-                method: 'GET',
-                url:
-                    constants.CONTEXT_URL +
-                    from_language +
-                    '-' +
-                    to_language +
-                    '/' +
-                    encodeURIComponent(text),
-                headers: {
-                    Accept: '*/*',
-                    Connection: 'keep-alive',
-                    'User-Agent': randomUseragent.getRandom(),
-                },
-            })
-                .then((response) => {
-                    const $ = cheerio.load(response.data);
-                    const examples = [];
-                    const translation = [];
-
-                    const from_example = $('body')
-                        .find('.example')
-                        .find(
-                            `div[class="src ${
-                                from_language === 'arabic'
-                                    ? 'rtl arabic'
-                                    : from_language === 'hebrew'
-                                    ? 'rtl'
-                                    : 'ltr'
-                            }"] > span[class="text"]`,
-                        )
-                        .text()
-                        .trim()
-                        .split('\n');
-                    const to_example = $('body')
-                        .find('.example')
-                        .find(
-                            `div[class="trg ${
-                                to_language === 'arabic'
-                                    ? 'rtl arabic'
-                                    : to_language === 'hebrew'
-                                    ? 'rtl'
-                                    : 'ltr'
-                            }"] > span[class="text"]`,
-                        )
-                        .text()
-                        .trim()
-                        .split('\n');
-                    const to_translation = $('body')
-                        .find('div[id="translations-content"]')
-                        .text()
-                        .split('\n');
-
-                    for (let i = 0; i < from_example.length; i++) {
-                        examples.push({
-                            id: i,
-                            from: from_example[i].trimStart(),
-                            to: to_example[i].trimStart(),
-                        });
-                    }
-
-                    to_translation.forEach((e) => {
-                        let string = e.trim();
-                        if (string.length <= 0) return;
-                        translation.push(e.trim());
-                    });
-
-                    if (typeof callback === 'function') {
-                        callback({
-                            text: text,
-                            from: from,
-                            to: to,
-                            translation: translation.filter((e) => e != text),
-                            examples: examples,
-                        });
-                    } else {
-                        resolve({
-                            text: text,
-                            from: from,
-                            to: to,
-                            translation: translation.filter((e) => e != text),
-                            examples: examples,
-                        });
-                    }
-                })
-                .catch((err) => {
-                    reject({ method: 'getContext', error: err });
-                });
-        });
+export class Reverso {
+    constructor() {
+        this.CONTEXT_URL = 'https://context.reverso.net/translation/'
+        this.SPELLCHECK_URL = 'https://orthographe.reverso.net/api/v1/Spelling'
+        this.SYNONYMS_URL = 'https://synonyms.reverso.net/synonym/'
+        this.TRANSLATION_URL =
+            'https://api.reverso.net/translate/v1/translation'
+        this.VOICE_URL =
+            'https://voice.reverso.net/RestPronunciation.svc/v1/output=json/GetVoiceStream/'
     }
 
     /**
-     * The same as spell checker on reverso.net
-     * @param {String} text Your query.
-     * @param {String} from Available languages: English and French.
-     * @param {Function} callback Your callback function. Not important.
-     * @returns {Promise <Array>} An array with data objects or an object with error(s).
+     * Get context examples of the query.
+     * @public
+     * @param text {string}
+     * @param source {'arabic' | 'german' | 'spanish' | 'french' | 'hebrew' | 'italian' | 'japanese' | 'dutch' | 'polish' | 'portuguese' | 'romanian' | 'russian' | 'turkish' | 'chinese' | 'english'}
+     * @param target {'arabic' | 'german' | 'spanish' | 'french' | 'hebrew' | 'italian' | 'japanese' | 'dutch' | 'polish' | 'portuguese' | 'romanian' | 'russian' | 'turkish' | 'chinese' | 'english'}
+     * @param cb {function}
+     * @returns {Promise<{ok: boolean, message: string}|{examples: {id: number, source: string, target: string}[], translations: string[], text, source: string, ok: boolean, target: string}>}
      */
-    getSpellCheck(text, from, callback) {
-        return new Promise(async (resolve, reject) => {
-            const from_language = from.toLowerCase();
+    async getContext(
+        text,
+        source = Languages.ENGLISH,
+        target = Languages.RUSSIAN,
+        cb = null
+    ) {
+        source = source.toLowerCase()
+        target = target.toLowerCase()
 
-            const is_correct_language = await checkLanguage(
-                'spell',
-                from_language,
-            ).catch((err) => err);
-            if (is_correct_language?.error)
-                return reject({
-                    method: 'getSpellCheck',
-                    ...is_correct_language,
-                });
+        if (cb && typeof cb !== 'function') {
+            return {
+                ok: false,
+                message: 'getContext: cb parameter must be type of function',
+            }
+        }
 
-            const languages = {
-                english: 'eng',
-                french: 'fra',
-            };
+        if (
+            !compatibility.context
+                .find((e) => e.name === source)
+                ?.compatible_with.includes(target)
+        ) {
+            const error = {
+                ok: false,
+                message: 'getContext: invalid language passed to the method',
+            }
 
-            axios({
-                method: 'GET',
-                url:
-                    constants.SPELLCHECK_URL +
-                    '?text=' +
-                    encodeURIComponent(text) +
-                    '&language=' +
-                    languages[from_language] +
-                    '&getCorrectionDetails=true',
-                headers: {
-                    Accept: '*/*',
-                    Connection: 'keep-alive',
-                    'User-Agent': randomUseragent.getRandom(),
-                },
-            })
-                .then((response) => {
-                    const data = response.data;
-                    const result = [];
+            if (cb) cb(error)
 
-                    for (let i = 0; i < data.corrections.length; i++) {
-                        result.push({
-                            id: i,
-                            text: text,
-                            type: data.corrections[i].type,
-                            explanation: data.corrections[i].longDescription,
-                            corrected: data.corrections[i].correctionText,
-                            full_corrected: data.text,
-                        });
-                    }
+            return error
+        }
 
-                    if (typeof callback === 'function') {
-                        callback(result);
-                    } else {
-                        resolve(result);
-                    }
-                })
-                .catch((err) => {
-                    reject({ method: 'getSpellCheck', error: err });
-                });
-        });
+        const data = await this.request({
+            method: 'GET',
+            url:
+                this.CONTEXT_URL +
+                [source, target].join('-') +
+                '/' +
+                encodeURIComponent(text),
+        })
+
+        const $ = load(data)
+        const sourceDirection =
+            source === Languages.ARABIC
+                ? `rtl ${Languages.ARABIC}`
+                : source === Languages.HEBREW
+                ? 'rtl'
+                : 'ltr'
+        const targetDirection =
+            target === 'arabic'
+                ? `rtl ${Languages.ARABIC}`
+                : target === Languages.HEBREW
+                ? 'rtl'
+                : 'ltr'
+
+        const sourceExamples = $(
+            `.example > div.src.${sourceDirection} > span.text`
+        )
+            .text()
+            .trim()
+            .split('\n')
+        const targetExamples = $(
+            `.example > div.trg.${targetDirection} > span.text`
+        )
+            .text()
+            .trim()
+            .split('\n')
+        const targetTranslations = $('#translations-content > div')
+            .text()
+            .trim()
+            .split('\n')
+
+        const examples = sourceExamples.map((e, i) => ({
+            id: i,
+            source: e.trim(),
+            target: targetExamples[i].trim(),
+        }))
+        const translations = targetTranslations.map((e) => e.trim())
+
+        const result = {
+            ok: true,
+            text,
+            source,
+            target,
+            translations,
+            examples,
+        }
+
+        if (cb) cb(null, result)
+
+        return result
     }
 
     /**
-     * The same as synonyms feature on reverso.net
-     * @param {String} text Your query.
-     * @param {String} from Available languages: English, Russian, German, Spanish, French, Italian, Polish.
-     * @param {Function} callback Available languages: English, Russian, German, Spanish, French, Italian, Polish.
-     * @returns An object with data or an object with error(s).
+     * Get spell check of the query.
+     * @public
+     * @param text {string}
+     * @param source {'english' | 'french'}
+     * @param cb {function}
+     * @returns {Promise<{ok: boolean, message: string}|{ ok: boolean, corrections: { id: number, text: string, type: string, explanation: string, corrected: string, suggestions: string}[]}>}
      */
-    getSynonyms(text, from, callback) {
-        return new Promise(async (resolve, reject) => {
-            const from_language = from.toLowerCase();
+    async getSpellCheck(text, source = Languages.ENGLISH, cb = null) {
+        source = source.toLowerCase()
 
-            const is_correct_language = await checkLanguage(
-                'synonym',
-                from_language,
-            ).catch((err) => err);
-            if (is_correct_language?.error)
-                return reject({
-                    method: 'getSynonyms',
-                    ...is_correct_language,
-                });
+        if (cb && typeof cb !== 'function') {
+            return {
+                ok: false,
+                message: 'getSpellCheck: cb parameter must be type of function',
+            }
+        }
 
-            const languages = {
-                english: 'en',
-                french: 'fr',
-                german: 'de',
-                russian: 'ru',
-                italian: 'it',
-                polish: 'pl',
-                spanish: 'es',
-            };
+        if (!available.spell.find((e) => e === source)) {
+            const error = {
+                ok: false,
+                message: 'getSpellCheck: invalid language passed to the method',
+            }
 
-            axios({
-                method: 'GET',
-                url:
-                    constants.SYNONYMS_URL +
-                    languages[from_language] +
-                    '/' +
-                    encodeURIComponent(text),
-                headers: {
-                    Accept: '*/*',
-                    Connection: 'keep-alive',
-                    'User-Agent': randomUseragent.getRandom(),
-                },
-            })
-                .then((response) => {
-                    const $ = cheerio.load(response.data);
-                    const synonyms = [];
+            if (cb) cb(error)
 
-                    $('body')
-                        .find(`a[class="synonym  relevant"]`)
-                        .each((i, e) => {
-                            synonyms.push({
-                                id: i,
-                                synonym: $(e).text(),
-                            });
-                        });
+            return error
+        }
 
-                    if (typeof callback === 'function') {
-                        callback({
-                            text: text,
-                            from: from_language,
-                            synonyms: synonyms,
-                        });
-                    } else {
-                        resolve({
-                            text: text,
-                            from: from_language,
-                            synonyms: synonyms,
-                        });
-                    }
-                })
-                .catch((err) => {
-                    reject({ method: 'getSynonyms', error: err });
-                });
-        });
+        const languages = {
+            english: 'eng',
+            french: 'fra',
+        }
+
+        const data = await this.request({
+            method: 'GET',
+            url:
+                this.SPELLCHECK_URL +
+                '?text=' +
+                encodeURIComponent(text) +
+                '&language=' +
+                languages[source] +
+                '&getCorrectionDetails=true',
+        })
+
+        const result = {
+            ok: true,
+            corrections: data.corrections.map((e, i) => ({
+                id: i,
+                text,
+                type: e.type,
+                explanation: e.longDescription,
+                corrected: e.correctionText,
+                suggestions: e.suggestions,
+            })),
+        }
+
+        if (cb) cb(null, result)
+
+        return result
     }
 
     /**
-     * The same as translation feature on reverso.net
-     * @param {String} text Your query.
-     * @param {String} from Available languages: English, Russian, German, Spanish, French, Italian, Polish.
-     * @param {String} to Available languages: English, Russian, German, Spanish, French, Italian, Polish.
-     * @param {Function} callback Your callback function. Not important.
-     * @returns An object with data or an object with error(s).
+     * Get synonyms of the query.
+     * @public
+     * @param text {string}
+     * @param source {'english' | 'russian' | 'german' | 'spanish' | 'french' | 'polish' | 'italian'}
+     * @param cb {function}
+     * @returns {Promise<{ok: boolean, message: string}|{synonyms: { id: number, synonym: string }[], text, source: string}>}
      */
-    getTranslation(text, from, to, callback) {
-        return new Promise(async (resolve, reject) => {
-            const from_language = from.toLowerCase();
-            const to_language = to.toLowerCase();
+    async getSynonyms(text, source = Languages.ENGLISH, cb = null) {
+        source = source.toLowerCase()
 
-            const is_correct_language = await checkLanguage(
-                'translation',
-                from_language,
-                to_language,
-            ).catch((err) => err);
-            if (is_correct_language?.error)
-                return reject({
-                    method: 'getTranslation',
-                    ...is_correct_language,
-                });
+        if (cb && typeof cb !== 'function') {
+            return {
+                ok: false,
+                message: 'getSynonyms: cb parameter must be type of function',
+            }
+        }
 
-            const languages = {
-                arabic: 'ara',
-                german: 'ger',
-                spanish: 'spa',
-                french: 'fra',
-                hebrew: 'heb',
-                italian: 'ita',
-                japanese: 'jpn',
-                dutch: 'dut',
-                polish: 'pol',
-                portuguese: 'por',
-                romanian: 'rum',
-                russian: 'rus',
-                ukrainian: 'ukr',
-                turkish: 'tur',
-                chinese: 'chi',
-                english: 'eng',
-            };
+        if (!available.synonyms.find((e) => e === source)) {
+            const error = {
+                ok: false,
+                message: 'getSynonyms: invalid language passed to the method',
+            }
 
-            const voices = {
-                arabic: 'Mehdi22k',
-                german: 'Claudia22k',
-                spanish: 'Ines22k',
-                french: 'Alice22k',
-                hebrew: 'he-IL-Asaf',
-                italian: 'Chiara22k',
-                japanese: 'Sakura22k',
-                dutch: 'Femke22k',
-                polish: 'Ania22k',
-                portuguese: 'Celia22k',
-                romanian: 'ro-RO-Andrei',
-                russian: 'Alyona22k',
-                turkish: 'Ipek22k',
-                chinese: 'Lulu22k',
-                english: 'Heather22k',
-            };
+            if (cb) cb(error)
 
-            axios({
-                method: 'POST',
-                url: constants.TRANSLATION_URL,
-                headers: {
-                    Accept: '*/*',
-                    Connection: 'keep-alive',
-                    'User-Agent': randomUseragent.getRandom(),
-                    'Content-Type': 'application/json',
-                },
-                data: {
-                    format: 'text',
-                    from: languages[from_language],
-                    input: text,
-                    options: {
-                        contextResults: true,
-                        languageDetection: true,
-                        origin: 'reversomobile',
-                        sentenceSplitter: false,
-                    },
-                    to: languages[to_language],
-                },
+            return error
+        }
+
+        const languages = {
+            english: 'en',
+            french: 'fr',
+            german: 'de',
+            russian: 'ru',
+            italian: 'it',
+            polish: 'pl',
+            spanish: 'es',
+        }
+
+        const data = await this.request({
+            method: 'GET',
+            url:
+                this.SYNONYMS_URL +
+                languages[source] +
+                '/' +
+                encodeURIComponent(text),
+        })
+
+        const $ = load(data)
+
+        const synonyms = []
+
+        $('a.synonym.relevant').each((i, e) => {
+            synonyms.push({
+                id: i,
+                synonym: $(e).text(),
             })
-                .then((response) => {
-                    const text_to_voice = Buffer.from(
-                        response.data.translation[0],
-                    ).toString('base64');
-                    const condition =
-                        voices[to_language] != undefined &&
-                        response.data.translation[0].length <= 150;
+        })
 
-                    if (response.data?.contextResults?.results) {
-                        const context_examples = [];
+        const result = {
+            ok: true,
+            text,
+            source,
+            synonyms,
+        }
 
-                        const source_examples =
-                            response.data.contextResults.results[0]
-                                .sourceExamples;
-                        const target_examples =
-                            response.data.contextResults.results[0]
-                                .targetExamples;
+        if (cb) cb(null, result)
 
-                        for (let i = 0; i < source_examples.length; i++) {
-                            context_examples.push({
-                                from: source_examples[i].replace(
-                                    /<[^>]*>/gi,
-                                    '',
-                                ),
-                                to: target_examples[i].replace(/<[^>]*>/gi, ''),
-                                phrase_from: [
-                                    ...source_examples[i].matchAll(
-                                        /<em>(.*?)<\/em>/g,
-                                    ),
-                                ][0][1],
-                                phrase_to: [
-                                    ...target_examples[i].matchAll(
-                                        /<em>(.*?)<\/em>/g,
-                                    ),
-                                ][0][1],
-                            });
-                        }
-
-                        if (typeof callback === 'function') {
-                            callback({
-                                text: text,
-                                from: from_language,
-                                to: to_language,
-                                translation: response.data.translation,
-                                context: {
-                                    examples: context_examples,
-                                    rude: response.data.contextResults
-                                        .results[0].rude,
-                                },
-                                detected_language:
-                                    response.data.languageDetection
-                                        .detectedLanguage,
-                                voice: condition
-                                    ? `${constants.VOICE_URL}voiceName=${voices[to_language]}?inputText=${text_to_voice}`
-                                    : null,
-                            });
-                        } else {
-                            resolve({
-                                text: text,
-                                from: from_language,
-                                to: to_language,
-                                translation: response.data.translation,
-                                context: {
-                                    examples: context_examples,
-                                    rude: response.data.contextResults
-                                        .results[0].rude,
-                                },
-                                detected_language:
-                                    response.data.languageDetection
-                                        .detectedLanguage,
-                                voice: condition
-                                    ? `${constants.VOICE_URL}voiceName=${voices[to_language]}?inputText=${text_to_voice}`
-                                    : null,
-                            });
-                        }
-                    } else {
-                        if (typeof callback === 'function') {
-                            callback({
-                                text: text,
-                                from: from_language,
-                                to: to_language,
-                                translation: response.data.translation,
-                                context: null,
-                                detected_language:
-                                    response.data.languageDetection
-                                        .detectedLanguage,
-                                voice: condition
-                                    ? `${constants.VOICE_URL}voiceName=${voices[to_language]}?inputText=${text_to_voice}`
-                                    : null,
-                            });
-                        } else {
-                            resolve({
-                                text: text,
-                                from: from_language,
-                                to: to_language,
-                                translation: response.data.translation,
-                                context: null,
-                                detected_language:
-                                    response.data.languageDetection
-                                        .detectedLanguage,
-                                voice: condition
-                                    ? `${constants.VOICE_URL}voiceName=${voices[to_language]}?inputText=${text_to_voice}`
-                                    : null,
-                            });
-                        }
-                    }
-                })
-                .catch((err) => {
-                    reject({ method: 'getTranslation', error: err });
-                });
-        });
+        return result
     }
-};
+
+    /**
+     * Get translation of the query.
+     * @public
+     * @param text {string}
+     * @param source {'arabic' | 'german' | 'spanish' | 'french' | 'hebrew' | 'italian' | 'japanese' | 'dutch' | 'polish' | 'portuguese' | 'romanian' | 'russian' | 'turkish' | 'chinese' | 'english' | 'ukrainian'}
+     * @param target {'arabic' | 'german' | 'spanish' | 'french' | 'hebrew' | 'italian' | 'japanese' | 'dutch' | 'polish' | 'portuguese' | 'romanian' | 'russian' | 'turkish' | 'chinese' | 'english' | 'ukrainian'}
+     * @param cb {function}
+     * @returns {Promise<{ok: boolean, message: string}|{voice: (string|null), detected_language: string, translations: string[], text: string, source: string, target: string}>}
+     */
+    async getTranslation(
+        text,
+        source = Languages.ENGLISH,
+        target = Languages.UKRAINIAN,
+        cb = null
+    ) {
+        source = source.toLowerCase()
+        target = target.toLowerCase()
+
+        if (cb && typeof cb !== 'function') {
+            return {
+                ok: false,
+                message:
+                    'getTranslation: cb parameter must be type of function',
+            }
+        }
+
+        if (
+            !compatibility.translation
+                .find((e) => e.name === source)
+                ?.compatible_with.includes(target)
+        ) {
+            const error = {
+                ok: false,
+                message:
+                    'getTranslation: invalid language passed to the method',
+            }
+
+            if (cb) cb(error)
+
+            return error
+        }
+
+        const languages = {
+            arabic: 'ara',
+            german: 'ger',
+            spanish: 'spa',
+            french: 'fra',
+            hebrew: 'heb',
+            italian: 'ita',
+            japanese: 'jpn',
+            dutch: 'dut',
+            polish: 'pol',
+            portuguese: 'por',
+            romanian: 'rum',
+            russian: 'rus',
+            ukrainian: 'ukr',
+            turkish: 'tur',
+            chinese: 'chi',
+            english: 'eng',
+        }
+
+        const voices = {
+            arabic: 'Mehdi22k',
+            german: 'Claudia22k',
+            spanish: 'Ines22k',
+            french: 'Alice22k',
+            hebrew: 'he-IL-Asaf',
+            italian: 'Chiara22k',
+            japanese: 'Sakura22k',
+            dutch: 'Femke22k',
+            polish: 'Ania22k',
+            portuguese: 'Celia22k',
+            romanian: 'ro-RO-Andrei',
+            russian: 'Alyona22k',
+            turkish: 'Ipek22k',
+            chinese: 'Lulu22k',
+            english: 'Heather22k',
+        }
+
+        const data = await this.request({
+            method: 'POST',
+            url: this.TRANSLATION_URL,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: {
+                format: 'text',
+                from: languages[source],
+                input: text,
+                options: {
+                    contextResults: true,
+                    languageDetection: true,
+                    origin: 'reversomobile',
+                    sentenceSplitter: false,
+                },
+                to: languages[target],
+            },
+        })
+
+        const translationEncoded = Buffer.from(data.translation[0]).toString(
+            'base64'
+        )
+
+        const result = {
+            ok: true,
+            text,
+            source,
+            target,
+            translations: data.translation,
+            detected_language: data.languageDetection.detectedLanguage,
+            voice:
+                voices[target] && data.translation[0].length <= 150
+                    ? `${this.VOICE_URL}voiceName=${voices[target]}?inputText=${translationEncoded}`
+                    : null,
+        }
+
+        if (data.contextResults?.results) {
+            const sourceExamples = data.contextResults.results[0].sourceExamples
+            const targetExamples = data.contextResults.results[0].targetExamples
+
+            const contextExamples = sourceExamples.map((e, i) => ({
+                id: i,
+                source: e.replace(/<[^>]*>/gi, ''),
+                target: targetExamples[i].replace(/<[^>]*>/gi, ''),
+                phrase_source: [...e.matchAll(/<em>(.*?)<\/em>/g)][0][1],
+                phrase_target: [
+                    ...targetExamples[i].matchAll(/<em>(.*?)<\/em>/g),
+                ][0][1],
+            }))
+
+            result.context = {
+                examples: contextExamples,
+                rude: data.contextResults.results[0].rude,
+            }
+        }
+
+        if (cb) cb(null, result)
+
+        return result
+    }
+
+    /**
+     * @private
+     */
+    async request(config) {
+        try {
+            const { data } = await axios(config)
+
+            return data
+        } catch (err) {
+            throw new Error(err.message)
+        }
+    }
+}

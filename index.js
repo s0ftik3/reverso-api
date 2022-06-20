@@ -1,11 +1,10 @@
 /*
- * Unofficial Reverso API (promise-based).
- * The API allows you to manipulate with your text in different ways.
- * Almost all the features from the website are supported by this API.
- * Currently supported: context, translation, spell check, synonyms.
- * 
+ * Unofficial Reverso API.
+ * Translate, get context examples or synonyms of words - this and much more
+ * you can do with your text queries via this API wrapper.
+ *
  * Source: reverso.net
  * Author: github.com/s0ftik3
  */
 
-module.exports = require('./src/reverso');
+export * from 'src/reverso.js'

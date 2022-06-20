@@ -1,41 +1,46 @@
 # Reverso API
+
 [![version](https://badgen.net/npm/v/reverso-api)](https://npmjs.com/package/reverso-api)
 [![downloads](https://badgen.net/npm/dm/reverso-api)](https://www.npmjs.com/package/reverso-api)
 [![telegram chat](https://img.shields.io/badge/Ask%20a%20Question-Telegram-blue)](https://t.me/reversoapi)
 
 [![logotype](/assets/reversoapi-logo.png)](https://npmjs.com/package/reverso-api)
 
-This API is not official! It allows you to manipulate with your text in different ways. Almost all the features from the website are supported by this API. Currently supported: context, translation, spell check, synonyms.
+Translate, get context examples or synonyms of words - this and much more you can do with your text queries via this API wrapper.
 
 ## Navigation
-- [Installing](#installing)
-- [Usage](#usage)
-- [Examples](#examples)
-    - [getContext](#getcontext)
-    - [getSpellCheck](#getspellcheck)
-    - [getSynonyms](#getsynonyms)
-    - [getTranslation](#gettranslation)
-- [Languages](#languages)
-- [Credits](#credits)
+
+-   [Installing](#installing)
+-   [Usage](#usage)
+-   [Examples](#examples)
+    -   [getContext](#getcontext)
+    -   [getSpellCheck](#getspellcheck)
+    -   [getSynonyms](#getsynonyms)
+    -   [getTranslation](#gettranslation)
+-   [Credits](#credits)
 
 ## Installing
+
 ```bash
 $ npm i reverso-api
 ```
 
 ## Usage
+
 ```javascript
-const Reverso = require('reverso-api');
-const reverso = new Reverso();
+import { Reverso } from 'reverso-api'
+const reverso = new Reverso()
 ```
+
 Congrats! You can use all the available methods now.\
 Let's read through the README and find out how the things work.
 
 You can pass either callback function...
+
 ```javascript
-reverso.getContext(...params, (response) => {
+reverso.getContext(...params, (err, response) => {
     ...
-});
+})
 ```
 
 or use `.then()` function.
@@ -43,33 +48,42 @@ or use `.then()` function.
 ```javascript
 reverso.getContext(...params).then((response) => {
     ...
-});
+})
 ```
 
 All the examples below are given using callback function.
 
 ## Examples
-- ### `getContext`
+
+### `getContext`
+
 ```javascript
-reverso.getContext('meet me half way', 'English', 'Russian', (response) => {
-    console.log(response);
-}).catch((err) => {
-    console.error(err);
-});
+reverso.getContext(
+    'meet me half way',
+    'english',
+    'russian',
+    (err, response) => {
+        if (err) throw new Error(err.message)
+
+        console.log(response)
+    }
+)
 ```
 
 Response:
+
 ```javascript
 {
+    ok: Boolean,
     text: String,
-    from: String,
-    to: String,
+    source: String,
+    target: String,
     translation: [String, ...],
     examples: [
         {
             id: Number,
-            from: String,
-            to: String
+            source: String,
+            target: String
         },
         ...
     ]
@@ -77,52 +91,69 @@ Response:
 ```
 
 Error:
+
 ```javascript
-{ method: String, error: String }
+{ ok: Boolean, message: String }
 ```
 
-- ### `getSpellCheck`
+### `getSpellCheck`
+
 ```javascript
-reverso.getSpellCheck('helo', 'English', (response) => {
-    console.log(response);
-}).catch((err) => {
-    console.error(err);
-});
+reverso.getSpellCheck('helo', 'english', (err, response) => {
+    if (err) throw new Error(err.message)
+
+    console.log(response)
+})
 ```
 
 Response:
+
 ```javascript
-[
-    {
-        id: Number,
-        text: String,
-        type: String,
-        explanation: String,
-        corrected: String,
-        full_corrected: String
-    }
-]
+{
+    ok: Boolean,
+    corrections: [
+        {
+            id: Number,
+            text: String,
+            type: String,
+            explanation: String,
+            corrected: String,
+            suggestions: [
+                { 
+                    text: String,
+                    definition: String,
+                    category: String,
+                },
+                ...
+            ],
+        },
+    ]
+}
 ```
 
 Error:
+
 ```javascript
-{ method: String, error: String }
+{ ok: Boolean, message: String }
 ```
 
-- ### `getSynonyms`
+### `getSynonyms`
+
 ```javascript
-reverso.getSynonyms('dzień dobry', 'Polish', (response) => {
-    console.log(response);
-}).catch((err) => {
-    console.error(err);
-});
+reverso.getSynonyms('dzień dobry', 'polish', (err, response) => {
+    if (err) throw new Error(err.message)
+
+    console.log(response)
+})
 ```
 
 Response:
+
 ```javascript
 {
+    ok: true,
     text: String,
-    from: String,
+    source: String,
     synonyms: [
         { id: Number, synonym: String },
         ...
@@ -131,37 +162,45 @@ Response:
 ```
 
 Error:
+
 ```javascript
-{ method: String, error: String }
+{ ok: Boolean, message: String }
 ```
 
-- ### `getTranslation`
+### `getTranslation`
 > ⚠️ **WARNING:** eventually, your server's IP address might get banned by Reverso moderators and you won't receive any data.
+
 ```javascript
-reverso.getTranslation('how is going?', 'English', 'Chinese', (response) => {
-    console.log(response);
-}).catch((err) => {
-    console.error(err);
-});
+reverso.getTranslation(
+    'how is going?',
+    'english',
+    'chinese',
+    (err, response) => {
+        if (err) throw new Error(err.message)
+
+        console.log(response)
+    }
+)
 ```
 
 Response:
+
 ```javascript
 {
     text: String,
-    from: String,
-    to: String,
-    translation: [String, ...],
+    source: String,
+    target: String,
+    translations: [String, ...],
     context: {
         examples: [
             {
-                from: String,
-                to: String,
-                phrase_from: String,
-                phrase_to: String
+                source: String,
+                target: String,
+                phrase_source: String,
+                phrase_target: String
             },
             ...
-        ], 
+        ],
         rude: Boolean
     }, // or null
     detected_language: String,
@@ -170,16 +209,13 @@ Response:
 ```
 
 Error:
+
 ```javascript
-{ method: String, error: String }
+{ ok: Boolean, message: String }
 ```
 
-## Languages
-`getContext` & `getTranslation`: English, Arabic, German, Spanish, French, Hebrew, Italian, Japanese, Dutch, Polish, Portuguese, Romanian, Russian, Turkish, Chinese. \
-`getSynonyms`: English, Russian, German, Spanish, French, Italian, Polish. \
-`getSpellCheck`: English, French
-
 ## Credits
-* All data is provided by [reverso.net](https://reverso.net).
-* Author on Telegram [@vychs](https://t.me/vychs).
-* Want to talk about the API? Join our [Telegram chat](https://t.me/reversoapi).
+
+-   All data is provided by [reverso.net](https://reverso.net).
+-   Author on Telegram [@vychs](https://t.me/vychs).
+-   Want to talk about the API? Join our [Telegram chat](https://t.me/reversoapi).
