@@ -19,15 +19,28 @@ axios.interceptors.request.use(
 )
 
 export class Reverso {
-    constructor() {
-        this.CONTEXT_URL = 'https://context.reverso.net/translation/'
-        this.SPELLCHECK_URL = 'https://orthographe.reverso.net/api/v1/Spelling'
-        this.SYNONYMS_URL = 'https://synonyms.reverso.net/synonym/'
-        this.TRANSLATION_URL =
-            'https://api.reverso.net/translate/v1/translation'
-        this.VOICE_URL =
-            'https://voice.reverso.net/RestPronunciation.svc/v1/output=json/GetVoiceStream/'
-    }
+    /**
+     * @private
+     */
+    CONTEXT_URL = 'https://context.reverso.net/translation/'
+    /**
+     * @private
+     */
+    SPELLCHECK_URL = 'https://orthographe.reverso.net/api/v1/Spelling'
+    /**
+     * @private
+     */
+    SYNONYMS_URL = 'https://synonyms.reverso.net/synonym/'
+    /**
+     * @private
+     */
+    TRANSLATION_URL =
+        'https://api.reverso.net/translate/v1/translation'
+    /**
+     * @private
+     */
+    VOICE_URL =
+        'https://voice.reverso.net/RestPronunciation.svc/v1/output=json/GetVoiceStream/'
 
     /**
      * Get context examples of the query.
