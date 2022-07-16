@@ -1,9 +1,10 @@
-import axios from 'axios'
-import available from './languages/available.js'
-import compatibility from './languages/compatibility.js'
-import { getRandom } from 'random-useragent'
-import { Languages } from './entities/languages.js'
-import { load } from 'cheerio'
+const axios = require('axios')
+const { getRandom } = require('random-useragent')
+const { load } = require('cheerio')
+
+const available = require('./languages/available.js')
+const compatibility = require('./languages/compatibility.js')
+const SupportedLanguages = require('./entities/languages.js')
 
 axios.interceptors.request.use(
     (config) => {
@@ -18,27 +19,16 @@ axios.interceptors.request.use(
     }
 )
 
-export class Reverso {
-    /**
-     * @private
-     */
+module.exports = class Reverso {
+    /** @private */
     CONTEXT_URL = 'https://context.reverso.net/translation/'
-    /**
-     * @private
-     */
+    /** @private */
     SPELLCHECK_URL = 'https://orthographe.reverso.net/api/v1/Spelling'
-    /**
-     * @private
-     */
+    /** @private */
     SYNONYMS_URL = 'https://synonyms.reverso.net/synonym/'
-    /**
-     * @private
-     */
-    TRANSLATION_URL =
-        'https://api.reverso.net/translate/v1/translation'
-    /**
-     * @private
-     */
+    /** @private */
+    TRANSLATION_URL = 'https://api.reverso.net/translate/v1/translation'
+    /** @private */
     VOICE_URL =
         'https://voice.reverso.net/RestPronunciation.svc/v1/output=json/GetVoiceStream/'
 
@@ -53,8 +43,8 @@ export class Reverso {
      */
     async getContext(
         text,
-        source = Languages.ENGLISH,
-        target = Languages.RUSSIAN,
+        source = SupportedLanguages.ENGLISH,
+        target = SupportedLanguages.RUSSIAN,
         cb = null
     ) {
         source = source.toLowerCase()
@@ -93,15 +83,15 @@ export class Reverso {
 
         const $ = load(data)
         const sourceDirection =
-            source === Languages.ARABIC
-                ? `rtl ${Languages.ARABIC}`
-                : source === Languages.HEBREW
+            source === SupportedLanguages.ARABIC
+                ? `rtl ${SupportedLanguages.ARABIC}`
+                : source === SupportedLanguages.HEBREW
                 ? 'rtl'
                 : 'ltr'
         const targetDirection =
             target === 'arabic'
-                ? `rtl ${Languages.ARABIC}`
-                : target === Languages.HEBREW
+                ? `rtl ${SupportedLanguages.ARABIC}`
+                : target === SupportedLanguages.HEBREW
                 ? 'rtl'
                 : 'ltr'
 
@@ -151,7 +141,7 @@ export class Reverso {
      * @param cb {function}
      * @returns {Promise<{ok: boolean, message: string}|{ ok: boolean, corrections: { id: number, text: string, type: string, explanation: string, corrected: string, suggestions: string}[]}>}
      */
-    async getSpellCheck(text, source = Languages.ENGLISH, cb = null) {
+    async getSpellCheck(text, source = SupportedLanguages.ENGLISH, cb = null) {
         source = source.toLowerCase()
 
         if (cb && typeof cb !== 'function') {
@@ -213,7 +203,7 @@ export class Reverso {
      * @param cb {function}
      * @returns {Promise<{ok: boolean, message: string}|{synonyms: { id: number, synonym: string }[], text, source: string}>}
      */
-    async getSynonyms(text, source = Languages.ENGLISH, cb = null) {
+    async getSynonyms(text, source = SupportedLanguages.ENGLISH, cb = null) {
         source = source.toLowerCase()
 
         if (cb && typeof cb !== 'function') {
@@ -287,8 +277,8 @@ export class Reverso {
      */
     async getTranslation(
         text,
-        source = Languages.ENGLISH,
-        target = Languages.UKRAINIAN,
+        source = SupportedLanguages.ENGLISH,
+        target = SupportedLanguages.UKRAINIAN,
         cb = null
     ) {
         source = source.toLowerCase()

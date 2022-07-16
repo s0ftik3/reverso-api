@@ -1,4 +1,4 @@
-export const Languages = {
+const SupportedLanguages = {
     ARABIC: 'arabic',
     GERMAN: 'german',
     SPANISH: 'spanish',
@@ -16,3 +16,4 @@ export const Languages = {
     ENGLISH: 'english',
     UKRAINIAN: 'ukrainian',
 }
+module.exports = SupportedLanguages

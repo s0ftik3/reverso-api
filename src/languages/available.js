@@ -1,4 +1,4 @@
-export default {
+const available = {
     context: [
         'arabic',
         'german',
@@ -45,3 +45,5 @@ export default {
         'ukrainian',
     ],
 }
+
+module.exports = available

@@ -28,7 +28,7 @@ $ npm i reverso-api
 ## Usage
 
 ```javascript
-import { Reverso } from 'reverso-api'
+const Reverso = require('reverso-api')
 const reverso = new Reverso()
 ```
 
@@ -119,7 +119,7 @@ Response:
             explanation: String,
             corrected: String,
             suggestions: [
-                { 
+                {
                     text: String,
                     definition: String,
                     category: String,
@@ -168,6 +168,7 @@ Error:
 ```
 
 ### `getTranslation`
+
 > ⚠️ **WARNING:** eventually, your server's IP address might get banned by Reverso moderators and you won't receive any data.
 
 ```javascript

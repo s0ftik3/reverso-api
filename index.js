@@ -7,4 +7,4 @@
  * Author: github.com/s0ftik3
  */
 
-export * from 'src/reverso.js'
+module.exports = require('./src/reverso')

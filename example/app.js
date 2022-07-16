@@ -1,5 +1,4 @@
-import { Reverso } from '../src/reverso.js'
-
+const Reverso = require('../src/reverso.js')
 const reverso = new Reverso()
 
 reverso.getContext(

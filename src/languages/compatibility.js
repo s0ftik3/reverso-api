@@ -1,4 +1,4 @@
-export default {
+const compatibility = {
     context: [
         {
             name: 'english',
@@ -506,3 +506,5 @@ export default {
         },
     ],
 }
+
+module.exports = compatibility
