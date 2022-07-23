@@ -33,6 +33,25 @@ module.exports = class Reverso {
         'https://voice.reverso.net/RestPronunciation.svc/v1/output=json/GetVoiceStream/'
 
     /**
+     * @private
+     * Whether to use the insecure HTTP parser in Axios.
+     *
+     * This HTTP parser accepts certain headers that do not strictly follow the specification in
+     * https://datatracker.ietf.org/doc/html/rfc2616#section-4.1. The Reverso API occasionally
+     * returns headers that do not end with CRLF. Enable this to support accept these malformed
+     * responses. See https://github.com/axios/axios#request-config
+     */
+    insecureHTTPParser = false
+
+    /**
+     * @public
+     * @param {insecureHTTPParser: boolean}
+     */
+    constructor({ insecureHTTPParser = false } = {}) {
+        this.insecureHTTPParser = insecureHTTPParser
+    }
+
+    /**
      * Get context examples of the query.
      * @public
      * @param text {string}
@@ -79,6 +98,7 @@ module.exports = class Reverso {
                 [source, target].join('-') +
                 '/' +
                 encodeURIComponent(text),
+            insecureHTTPParser: this.insecureHTTPParser,
         })
 
         const $ = load(data)
@@ -176,6 +196,7 @@ module.exports = class Reverso {
                 '&language=' +
                 languages[source] +
                 '&getCorrectionDetails=true',
+            insecureHTTPParser: this.insecureHTTPParser,
         })
 
         const result = {
@@ -241,6 +262,7 @@ module.exports = class Reverso {
                 languages[source] +
                 '/' +
                 encodeURIComponent(text),
+            insecureHTTPParser: this.insecureHTTPParser,
         })
 
         const $ = load(data)
@@ -363,6 +385,7 @@ module.exports = class Reverso {
                 },
                 to: languages[target],
             },
+            insecureHTTPParser: this.insecureHTTPParser,
         })
 
         const translationEncoded = Buffer.from(data.translation[0]).toString(
