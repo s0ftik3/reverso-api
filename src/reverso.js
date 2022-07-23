@@ -78,7 +78,7 @@ module.exports = class Reverso {
                 this.CONTEXT_URL +
                 [source, target].join('-') +
                 '/' +
-                encodeURIComponent(text),
+                encodeURIComponent(text).replace(/%20/g, '+'),
         })
 
         const $ = load(data)

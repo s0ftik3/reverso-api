@@ -2,7 +2,7 @@ const Reverso = require('../src/reverso.js')
 const reverso = new Reverso()
 
 reverso.getContext(
-    'meet me half way',
+    'meet me halfway',
     'english',
     'russian',
     (err, response) => {
