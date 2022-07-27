@@ -98,7 +98,6 @@ module.exports = class Reverso {
                 [source, target].join('-') +
                 '/' +
                 encodeURIComponent(text),
-            insecureHTTPParser: this.insecureHTTPParser,
         })
 
         const $ = load(data)
@@ -196,7 +195,6 @@ module.exports = class Reverso {
                 '&language=' +
                 languages[source] +
                 '&getCorrectionDetails=true',
-            insecureHTTPParser: this.insecureHTTPParser,
         })
 
         const result = {
@@ -262,7 +260,6 @@ module.exports = class Reverso {
                 languages[source] +
                 '/' +
                 encodeURIComponent(text),
-            insecureHTTPParser: this.insecureHTTPParser,
         })
 
         const $ = load(data)
@@ -385,7 +382,6 @@ module.exports = class Reverso {
                 },
                 to: languages[target],
             },
-            insecureHTTPParser: this.insecureHTTPParser,
         })
 
         const translationEncoded = Buffer.from(data.translation[0]).toString(
@@ -435,7 +431,10 @@ module.exports = class Reverso {
      */
     async request(config) {
         try {
-            const { data } = await axios(config)
+            const { data } = await axios({
+                insecureHTTPParser: this.insecureHTTPParser,
+                ...config,
+            })
 
             return data
         } catch (err) {
