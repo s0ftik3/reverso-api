@@ -91,7 +91,7 @@ module.exports = class Reverso {
             return error
         }
 
-        const data = await this.request({
+        const data = await this.#request({
             method: 'GET',
             url:
                 this.CONTEXT_URL +
@@ -186,7 +186,7 @@ module.exports = class Reverso {
             french: 'fra',
         }
 
-        const data = await this.request({
+        const data = await this.#request({
             method: 'GET',
             url:
                 this.SPELLCHECK_URL +
@@ -253,7 +253,7 @@ module.exports = class Reverso {
             spanish: 'es',
         }
 
-        const data = await this.request({
+        const data = await this.#request({
             method: 'GET',
             url:
                 this.SYNONYMS_URL +
@@ -364,7 +364,7 @@ module.exports = class Reverso {
             english: 'Heather22k',
         }
 
-        const data = await this.request({
+        const data = await this.#request({
             method: 'POST',
             url: this.TRANSLATION_URL,
             headers: {
@@ -426,10 +426,7 @@ module.exports = class Reverso {
         return result
     }
 
-    /**
-     * @private
-     */
-    async request(config) {
+    async #request(config) {
         try {
             const { data } = await axios({
                 insecureHTTPParser: this.insecureHTTPParser,
