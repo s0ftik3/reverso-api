@@ -34,3 +34,15 @@ reverso.getTranslation(
         console.log(response)
     }
 )
+
+const reversoInsecureHTTPParser = new Reverso({ insecureHTTPParser: true })
+reversoInsecureHTTPParser.getContext(
+    'see you later',
+    'english',
+    'dutch',
+    (err, response) => {
+        if (err) throw new Error(err.message)
+
+        console.log(response)
+    }
+)
