@@ -111,6 +111,14 @@ Response:
 ```javascript
 {
     ok: Boolean,
+    text: String,
+    sentences: [ { startIndex: Number, endIndex: Number, status: String } ... ],
+    stats: {
+        textLength: Number,
+        wordCount: Number,
+        sentenceCount: Number,
+        longestSentence: Number,
+    },
     corrections: [
         {
             id: Number,

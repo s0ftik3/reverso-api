@@ -158,7 +158,7 @@ module.exports = class Reverso {
      * @param text {string}
      * @param source {'english' | 'french'}
      * @param cb {function}
-     * @returns {Promise<{ok: boolean, message: string}|{ ok: boolean, corrections: { id: number, text: string, type: string, explanation: string, corrected: string, suggestions: string}[]}>}
+     * @returns {Promise<{ok: boolean, message: string}|{ ok: boolean, data: string, sentences: any[], stats: any[], corrections: { id: number, text: string, type: string, explanation: string, corrected: string, suggestions: string}[]}>}
      */
     async getSpellCheck(text, source = SupportedLanguages.ENGLISH, cb = null) {
         source = source.toLowerCase()
@@ -197,8 +197,22 @@ module.exports = class Reverso {
                 '&getCorrectionDetails=true',
         })
 
+        if (!data || !Object.keys(data).length) {
+            const error = {
+                ok: false,
+                message: "getSpellCheck: Reverso didn't return result",
+            }
+
+            if (cb) cb(error)
+
+            return error
+        }
+
         const result = {
             ok: true,
+            text: data.text,
+            sentences: data.sentences,
+            stats: data.stats,
             corrections: data.corrections.map((e, i) => ({
                 id: i,
                 text,
