@@ -44,6 +44,7 @@ const available = {
         'english',
         'ukrainian',
     ],
+    conjugation: ['english', 'russian'],
 }
 
 module.exports = available

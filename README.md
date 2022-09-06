@@ -17,6 +17,7 @@ Translate, get context examples or synonyms of words - this and much more you ca
     -   [getSpellCheck](#getspellcheck)
     -   [getSynonyms](#getsynonyms)
     -   [getTranslation](#gettranslation)
+    -   [getConjugation](#getconjugation)
 -   [Credits](#credits)
 
 ## Installing
@@ -214,6 +215,38 @@ Response:
     }, // or null
     detected_language: String,
     voice: String // or null
+}
+```
+
+Error:
+
+```javascript
+{ ok: Boolean, message: String }
+```
+
+### `getConjugation`
+
+```javascript
+reverso.getConjugation('идти', 'russian', (err, response) => {
+    if (err) throw new Error(err.message)
+
+    console.log(response)
+})
+```
+
+Response:
+
+```javascript
+{
+    ok: Boolean,
+    verbForms: [
+        {
+            id: Number,
+            conjugation: String,
+            verbs: [String, ...],
+        },
+        ...
+    ]
 }
 ```
 

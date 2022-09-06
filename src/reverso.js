@@ -31,6 +31,8 @@ module.exports = class Reverso {
     /** @private */
     VOICE_URL =
         'https://voice.reverso.net/RestPronunciation.svc/v1/output=json/GetVoiceStream/'
+    /** @private */
+    CONJUGATION_URL = 'https://conjugator.reverso.net/conjugation-english-verb-'
 
     /**
      * @private
@@ -433,6 +435,71 @@ module.exports = class Reverso {
                 examples: contextExamples,
                 rude: data.contextResults.results[0].rude,
             }
+        }
+
+        if (cb) cb(null, result)
+
+        return result
+    }
+
+    async getConjugation(text, source = SupportedLanguages.ENGLISH, cb = null) {
+        source = source.toLowerCase()
+
+        if (cb && typeof cb !== 'function') {
+            return {
+                ok: false,
+                message:
+                    'getConjugation: cb parameter must be type of function',
+            }
+        }
+
+        if (!available.conjugation.find((e) => e === source)) {
+            const error = {
+                ok: false,
+                message:
+                    'getConjugation: invalid language passed to the method',
+            }
+
+            if (cb) cb(error)
+
+            return error
+        }
+
+        const data = await this.#request({
+            method: 'GET',
+            url: this.CONJUGATION_URL + encodeURIComponent(text) + '.html',
+        })
+
+        const $ = load(data)
+
+        const verbForms = []
+
+        $('div[class="blue-box-wrap"]').each((i, e) => {
+            const header = $(e).attr('mobile-title').trim()
+            const data = []
+
+            $(e)
+                .find(
+                    `i[class="verbtxt${
+                        source === SupportedLanguages.RUSSIAN ? '-term' : ''
+                    }"]`
+                )
+                .each((j, word) => {
+                    if (!$(word).parents('.transliteration').attr('class')) {
+                        data.push($(word).text())
+                    }
+                })
+
+            verbForms.push({
+                id: i,
+                conjugation: header,
+                verbs: [...new Set(data)],
+            })
+        })
+
+        const result = {
+            ok: true,
+            verbForms,
         }
 
         if (cb) cb(null, result)
