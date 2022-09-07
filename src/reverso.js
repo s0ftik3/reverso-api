@@ -409,7 +409,12 @@ module.exports = class Reverso {
             text,
             source,
             target,
-            translations: data.translation,
+            translations: [
+                ...data.translation,
+                ...(!data.contextResults?.results
+                    ? []
+                    : data.contextResults.results.map((e) => e.translation)),
+            ],
             detected_language: data.languageDetection.detectedLanguage,
             voice:
                 voices[target] && data.translation[0].length <= 150
