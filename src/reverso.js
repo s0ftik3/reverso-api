@@ -286,7 +286,7 @@ module.exports = class Reverso {
             synonyms.push({
                 id: i,
                 synonym: $(e).text(),
-                isRelevant: e.classList.contains('relevant'),
+                isRelevant: $(e).attr('class').includes('relevant'),
             });
         })
 
