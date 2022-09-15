@@ -282,11 +282,12 @@ module.exports = class Reverso {
 
         const synonyms = []
 
-        $('a.synonym.relevant').each((i, e) => {
+        $('a.synonym').each((i, e) => {
             synonyms.push({
                 id: i,
                 synonym: $(e).text(),
-            })
+                isRelevant: e.classList.contains('relevant'),
+            });
         })
 
         const result = {
