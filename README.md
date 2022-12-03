@@ -206,8 +206,22 @@ Response:
             {
                 source: String,
                 target: String,
-                phrase_source: String,
-                phrase_target: String
+                source_phrases: [
+                    {
+                        phrase: String,
+                        offset: Number,
+                        length: Number
+                    },
+                    ...
+                ],
+                target_phrases: [
+                    {
+                        phrase: String,
+                        offset: Number,
+                        length: Number
+                    },
+                    ...
+                ]
             },
             ...
         ],
