@@ -414,7 +414,7 @@ module.exports = class Reverso {
                 ...(!data.contextResults?.results
                     ? []
                     : data.contextResults.results.map((e) => e.translation)),
-            ],
+            ].filter(Boolean),
             detected_language: data.languageDetection.detectedLanguage,
             voice:
                 voices[target] && data.translation[0].length <= 150
@@ -423,18 +423,29 @@ module.exports = class Reverso {
         }
 
         if (data.contextResults?.results) {
-            const sourceExamples = data.contextResults.results[0].sourceExamples
-            const targetExamples = data.contextResults.results[0].targetExamples
+            const { sourceExamples, targetExamples } =
+                data.contextResults.results[0]
 
-            const contextExamples = sourceExamples.map((e, i) => ({
-                id: i,
-                source: e.replace(/<[^>]*>/gi, ''),
-                target: targetExamples[i].replace(/<[^>]*>/gi, ''),
-                phrase_source: [...e.matchAll(/<em>(.*?)<\/em>/g)][0][1],
-                phrase_target: [
-                    ...targetExamples[i].matchAll(/<em>(.*?)<\/em>/g),
-                ][0][1],
-            }))
+            const matchContextPhrases = (el) => {
+                return [...el.matchAll(/<em>(.*?)<\/em>/g)].map((e) => ({
+                    phrase: e[1],
+                    offset: e.index,
+                    length: e[1].length,
+                }))
+            }
+
+            const contextExamples = sourceExamples.map((e, i) => {
+                const sourcePhrases = matchContextPhrases(e)
+                const targetPhrases = matchContextPhrases(targetExamples[i])
+
+                return {
+                    id: i,
+                    source: e.replace(/<[^>]*>/gi, ''),
+                    target: targetExamples[i].replace(/<[^>]*>/gi, ''),
+                    source_phrases: sourcePhrases ?? [],
+                    target_phrases: targetPhrases ?? [],
+                }
+            })
 
             result.context = {
                 examples: contextExamples,
