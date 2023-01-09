@@ -32,7 +32,7 @@ module.exports = class Reverso {
     VOICE_URL =
         'https://voice.reverso.net/RestPronunciation.svc/v1/output=json/GetVoiceStream/'
     /** @private */
-    CONJUGATION_URL = 'https://conjugator.reverso.net/conjugation-english-verb-'
+    CONJUGATION_URL = 'https://conjugator.reverso.net/conjugation-'
 
     /**
      * @private
@@ -483,7 +483,12 @@ module.exports = class Reverso {
 
         const data = await this.#request({
             method: 'GET',
-            url: this.CONJUGATION_URL + encodeURIComponent(text) + '.html',
+            url:
+                this.CONJUGATION_URL +
+                source +
+                '-verb-' +
+                encodeURIComponent(text) +
+                '.html',
         })
 
         const $ = load(data)

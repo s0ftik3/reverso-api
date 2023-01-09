@@ -30,7 +30,7 @@ reverso.getTranslation(
     }
 )
 
-reverso.getConjugation('идти', 'russian', (err, response) => {
+reverso.getConjugation('aller', 'french', (err, response) => {
     if (err) throw new Error(err.message)
 
     console.log(response)
