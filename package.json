@@ -3,6 +3,7 @@
     "version": "2.22.3",
     "description": "Unofficial Reverso API",
     "main": "index.js",
+    "types": "@types/index.d.ts",
     "homepage": "https://github.com/s0ftik3/reverso-api#readme",
     "repository": "https://github.com/s0ftik3/reverso-api",
     "scripts": {
