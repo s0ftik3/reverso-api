@@ -79,7 +79,7 @@ Response:
     text: String,
     source: String,
     target: String,
-    translation: [String, ...],
+    translations: [String, ...],
     examples: [
         {
             id: Number,
