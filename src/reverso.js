@@ -189,14 +189,17 @@ module.exports = class Reverso {
         }
 
         const data = await this.#request({
-            method: 'GET',
-            url:
-                this.SPELLCHECK_URL +
-                '?text=' +
-                encodeURIComponent(text) +
-                '&language=' +
-                languages[source] +
-                '&getCorrectionDetails=true',
+            method: 'POST',
+            url: this.SPELLCHECK_URL,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: {
+                language: languages[source],
+                getCorrectionDetails: true,
+                origin: 'interactive',
+                text,
+            },
         })
 
         if (!data || !Object.keys(data).length) {
