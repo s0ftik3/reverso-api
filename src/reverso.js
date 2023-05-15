@@ -521,8 +521,11 @@ module.exports = class Reverso {
             })
         })
 
+        const infinitive = $("#ch_lblVerb").text()
+
         const result = {
             ok: true,
+            infinitive: infinitive,
             verbForms,
         }
 
