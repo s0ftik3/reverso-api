@@ -253,7 +253,7 @@ Response:
 ```javascript
 {
     ok: Boolean,
-    infinitive: String,    
+    infinitive: String,
     verbForms: [
         {
             id: Number,

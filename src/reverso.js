@@ -505,7 +505,12 @@ module.exports = class Reverso {
             $(e)
                 .find(
                     `i[class="verbtxt${
-                        source === SupportedLanguages.RUSSIAN ? '-term' : ''
+                        [
+                            SupportedLanguages.RUSSIAN,
+                            SupportedLanguages.HEBREW,
+                        ].includes(source)
+                            ? '-term'
+                            : ''
                     }"]`
                 )
                 .each((j, word) => {
@@ -521,7 +526,7 @@ module.exports = class Reverso {
             })
         })
 
-        const infinitive = $("#ch_lblVerb").text()
+        const infinitive = $('#ch_lblVerb').text()
 
         const result = {
             ok: true,
