@@ -93,14 +93,21 @@ module.exports = class Reverso {
             return error
         }
 
-        const data = await this.#request({
-            method: 'GET',
-            url:
-                this.CONTEXT_URL +
-                [source, target].join('-') +
-                '/' +
-                encodeURIComponent(text).replace(/%20/g, '+'),
-        })
+        let data = null;
+        try {
+            data = await this.#request({
+                method: 'GET',
+                url:
+                    this.CONTEXT_URL +
+                    [source, target].join('-') +
+                    '/' +
+                    encodeURIComponent(text).replace(/%20/g, '+'),
+            })
+        }
+        catch (error) {
+            if (cb) cb(error)
+            return error;
+        }
 
         const $ = load(data)
         const sourceDirection =
@@ -188,19 +195,26 @@ module.exports = class Reverso {
             french: 'fra',
         }
 
-        const data = await this.#request({
-            method: 'POST',
-            url: this.SPELLCHECK_URL,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            data: {
-                language: languages[source],
-                getCorrectionDetails: true,
-                origin: 'interactive',
-                text,
-            },
-        })
+        let data = null;
+        try {
+            data = await this.#request({
+                method: 'POST',
+                url: this.SPELLCHECK_URL,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: {
+                    language: languages[source],
+                    getCorrectionDetails: true,
+                    origin: 'interactive',
+                    text,
+                },
+            })
+        }
+        catch (error) {
+            if (cb) cb(error)
+            return error;
+        }
 
         if (!data || !Object.keys(data).length) {
             const error = {
@@ -272,14 +286,21 @@ module.exports = class Reverso {
             spanish: 'es',
         }
 
-        const data = await this.#request({
-            method: 'GET',
-            url:
-                this.SYNONYMS_URL +
-                languages[source] +
-                '/' +
-                encodeURIComponent(text),
-        })
+        let data = null;
+        try {
+            data = await this.#request({
+                method: 'GET',
+                url:
+                    this.SYNONYMS_URL +
+                    languages[source] +
+                    '/' +
+                    encodeURIComponent(text),
+            })
+        }
+        catch (error) {
+            if (cb) cb(error)
+            return error;
+        }
 
         const $ = load(data)
 
@@ -383,25 +404,32 @@ module.exports = class Reverso {
             english: 'Heather22k',
         }
 
-        const data = await this.#request({
-            method: 'POST',
-            url: this.TRANSLATION_URL,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            data: {
-                format: 'text',
-                from: languages[source],
-                input: text,
-                options: {
-                    contextResults: true,
-                    languageDetection: true,
-                    origin: 'reversomobile',
-                    sentenceSplitter: false,
+        let data = null;
+        try {
+            data = await this.#request({
+                method: 'POST',
+                url: this.TRANSLATION_URL,
+                headers: {
+                    'Content-Type': 'application/json',
                 },
-                to: languages[target],
-            },
-        })
+                data: {
+                    format: 'text',
+                    from: languages[source],
+                    input: text,
+                    options: {
+                        contextResults: true,
+                        languageDetection: true,
+                        origin: 'reversomobile',
+                        sentenceSplitter: false,
+                    },
+                    to: languages[target],
+                },
+            })
+        }
+        catch (error) {
+            if (cb) cb(error)
+            return error;
+        }
 
         const translationEncoded = Buffer.from(data.translation[0]).toString(
             'base64'
@@ -484,15 +512,22 @@ module.exports = class Reverso {
             return error
         }
 
-        const data = await this.#request({
-            method: 'GET',
-            url:
-                this.CONJUGATION_URL +
-                source +
-                '-verb-' +
-                encodeURIComponent(text) +
-                '.html',
-        })
+        let data = null;
+        try {
+            data = await this.#request({
+                method: 'GET',
+                url:
+                    this.CONJUGATION_URL +
+                    source +
+                    '-verb-' +
+                    encodeURIComponent(text) +
+                    '.html',
+            })
+        }
+        catch (error) {
+            if (cb) cb(error)
+            return error;
+        }
 
         const $ = load(data)
 
