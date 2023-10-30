@@ -160,7 +160,7 @@ module.exports = class Reverso {
      * @param text {string}
      * @param source {'english' | 'french' | 'italian' | 'spanish'}
      * @param cb {function}
-     * @returns {Promise<{ok: boolean, message: string}|{ ok: boolean, data: string, sentences: any[], stats: any[], corrections: { id: number, text: string, type: string, explanation: string, corrected: string, suggestions: string}[]}>}
+     * @returns {Promise<{ok: boolean, text: string}|{ ok: boolean, data: string, sentences: any[], stats: any[], corrections: { id: number, text: string, type: string, explanation: string, corrected: string, suggestions: string}[]}>}
      */
     async getSpellCheck(text, source = SupportedLanguages.ENGLISH, cb = null) {
         source = source.toLowerCase()
