@@ -17,6 +17,7 @@ const compatibility = {
                 'russian',
                 'turkish',
                 'chinese',
+                'swedish',
             ],
         },
         {
@@ -49,6 +50,7 @@ const compatibility = {
                 'romanian',
                 'russian',
                 'turkish',
+                'swedish',
             ],
         },
         {
@@ -68,6 +70,7 @@ const compatibility = {
                 'russian',
                 'turkish',
                 'chinese',
+                'swedish',
             ],
         },
         {
@@ -87,6 +90,7 @@ const compatibility = {
                 'russian',
                 'turkish',
                 'chinese',
+                'swedish',
             ],
         },
         {
@@ -120,6 +124,7 @@ const compatibility = {
                 'russian',
                 'turkish',
                 'chinese',
+                'swedish',
             ],
         },
         {
@@ -215,6 +220,16 @@ const compatibility = {
         {
             name: 'chinese',
             compatible_with: ['english', 'spanish', 'french'],
+        },
+        {
+            name: 'swedish',
+            compatible_with: [
+                'german',
+                'english',
+                'spanish',
+                'french',
+                'italian',
+            ],
         },
     ],
     translation: [

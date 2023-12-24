@@ -15,13 +15,9 @@ const available = {
         'turkish',
         'chinese',
         'english',
+        'swedish',
     ],
-    spell: [
-        'english', 
-        'french',
-        'italian',
-        'spanish',
-    ],
+    spell: ['english', 'french', 'italian', 'spanish'],
     synonyms: [
         'english',
         'russian',

@@ -57,8 +57,8 @@ module.exports = class Reverso {
      * Get context examples of the query.
      * @public
      * @param text {string}
-     * @param source {'arabic' | 'german' | 'spanish' | 'french' | 'hebrew' | 'italian' | 'japanese' | 'dutch' | 'polish' | 'portuguese' | 'romanian' | 'russian' | 'turkish' | 'chinese' | 'english'}
-     * @param target {'arabic' | 'german' | 'spanish' | 'french' | 'hebrew' | 'italian' | 'japanese' | 'dutch' | 'polish' | 'portuguese' | 'romanian' | 'russian' | 'turkish' | 'chinese' | 'english'}
+     * @param source {'arabic' | 'german' | 'spanish' | 'french' | 'hebrew' | 'italian' | 'japanese' | 'dutch' | 'polish' | 'portuguese' | 'romanian' | 'russian' | 'turkish' | 'chinese' | 'english' | 'swedish'}
+     * @param target {'arabic' | 'german' | 'spanish' | 'french' | 'hebrew' | 'italian' | 'japanese' | 'dutch' | 'polish' | 'portuguese' | 'romanian' | 'russian' | 'turkish' | 'chinese' | 'english' | 'swedish'}
      * @param cb {function}
      * @returns {Promise<{ok: boolean, message: string}|{examples: {id: number, source: string, target: string}[], translations: string[], text, source: string, ok: boolean, target: string}>}
      */
@@ -93,7 +93,7 @@ module.exports = class Reverso {
             return error
         }
 
-        const data = await this.#request({
+        const response = await this.#request({
             method: 'GET',
             url:
                 this.CONTEXT_URL +
@@ -101,8 +101,9 @@ module.exports = class Reverso {
                 '/' +
                 encodeURIComponent(text).replace(/%20/g, '+'),
         })
+        if (!response.success) return this.#handleError(response.error, cb)
 
-        const $ = load(data)
+        const $ = load(response.data)
         const sourceDirection =
             source === SupportedLanguages.ARABIC
                 ? `rtl ${SupportedLanguages.ARABIC}`
@@ -187,10 +188,10 @@ module.exports = class Reverso {
             english: 'eng',
             french: 'fra',
             italian: 'ita',
-            spanish: 'spa'
+            spanish: 'spa',
         }
 
-        const data = await this.#request({
+        const response = await this.#request({
             method: 'POST',
             url: this.SPELLCHECK_URL,
             headers: {
@@ -203,24 +204,20 @@ module.exports = class Reverso {
                 text,
             },
         })
-
-        if (!data || !Object.keys(data).length) {
-            const error = {
-                ok: false,
-                message: "getSpellCheck: Reverso didn't return result",
-            }
-
-            if (cb) cb(error)
-
-            return error
-        }
+        if (!response.success || !Object.keys(response.data).length)
+            return this.#handleError(
+                {
+                    message: 'No result',
+                },
+                cb
+            )
 
         const result = {
             ok: true,
-            text: data.text,
-            sentences: data.sentences,
-            stats: data.stats,
-            corrections: data.corrections.map((e, i) => ({
+            text: response.data.text,
+            sentences: response.data.sentences,
+            stats: response.data.stats,
+            corrections: response.data.corrections.map((e, i) => ({
                 id: i,
                 text,
                 type: e.type,
@@ -277,10 +274,10 @@ module.exports = class Reverso {
             japanese: 'ja',
             dutch: 'nl',
             portugese: 'pt',
-            romanian: 'ro'
+            romanian: 'ro',
         }
 
-        const data = await this.#request({
+        const response = await this.#request({
             method: 'GET',
             url:
                 this.SYNONYMS_URL +
@@ -288,8 +285,9 @@ module.exports = class Reverso {
                 '/' +
                 encodeURIComponent(text),
         })
+        if (!response.success) return this.#handleError(response.error, cb)
 
-        const $ = load(data)
+        const $ = load(response.data)
 
         const synonyms = []
 
@@ -391,7 +389,7 @@ module.exports = class Reverso {
             english: 'Heather22k',
         }
 
-        const data = await this.#request({
+        const response = await this.#request({
             method: 'POST',
             url: this.TRANSLATION_URL,
             headers: {
@@ -410,10 +408,11 @@ module.exports = class Reverso {
                 to: languages[target],
             },
         })
+        if (!response.success) return this.#handleError(response.error, cb)
 
-        const translationEncoded = Buffer.from(data.translation[0]).toString(
-            'base64'
-        )
+        const translationEncoded = Buffer.from(
+            response.data.translation[0]
+        ).toString('base64')
 
         const result = {
             ok: true,
@@ -421,21 +420,23 @@ module.exports = class Reverso {
             source,
             target,
             translations: [
-                ...data.translation,
-                ...(!data.contextResults?.results
+                ...response.data.translation,
+                ...(!response.data.contextResults?.results
                     ? []
-                    : data.contextResults.results.map((e) => e.translation)),
+                    : response.data.contextResults.results.map(
+                          (e) => e.translation
+                      )),
             ].filter(Boolean),
-            detected_language: data.languageDetection.detectedLanguage,
+            detected_language: response.data.languageDetection.detectedLanguage,
             voice:
-                voices[target] && data.translation[0].length <= 150
+                voices[target] && response.data.translation[0].length <= 150
                     ? `${this.VOICE_URL}voiceName=${voices[target]}?inputText=${translationEncoded}`
                     : null,
         }
 
-        if (data.contextResults?.results) {
+        if (response.data.contextResults?.results) {
             const { sourceExamples, targetExamples } =
-                data.contextResults.results[0]
+                response.data.contextResults.results[0]
 
             const matchContextPhrases = (el) => {
                 return [...el.matchAll(/<em>(.*?)<\/em>/g)].map((e) => ({
@@ -460,7 +461,7 @@ module.exports = class Reverso {
 
             result.context = {
                 examples: contextExamples,
-                rude: data.contextResults.results[0].rude,
+                rude: response.data.contextResults.results[0].rude,
             }
         }
 
@@ -492,7 +493,7 @@ module.exports = class Reverso {
             return error
         }
 
-        const data = await this.#request({
+        const response = await this.#request({
             method: 'GET',
             url:
                 this.CONJUGATION_URL +
@@ -501,8 +502,9 @@ module.exports = class Reverso {
                 encodeURIComponent(text) +
                 '.html',
         })
+        if (!response.success) return this.#handleError(response.error, cb)
 
-        const $ = load(data)
+        const $ = load(response.data)
 
         const verbForms = []
 
@@ -547,6 +549,10 @@ module.exports = class Reverso {
         return result
     }
 
+    /**
+     * @param config
+     * @returns {Promise<any>}
+     */
     async #request(config) {
         try {
             const { data } = await axios({
@@ -554,9 +560,24 @@ module.exports = class Reverso {
                 ...config,
             })
 
-            return data
-        } catch (err) {
-            throw new Error(err.message)
+            return { success: true, data }
+        } catch (error) {
+            return { success: false, error }
         }
+    }
+
+    /**
+     * @param error
+     * @param cb
+     * @returns {{ok: boolean, message}}
+     */
+    #handleError(error, cb) {
+        error = {
+            ok: false,
+            message: error.message || 'An error occurred',
+        }
+
+        if (cb) cb(error)
+        return error
     }
 }
