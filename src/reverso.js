@@ -158,9 +158,9 @@ module.exports = class Reverso {
      * Get spell check of the query.
      * @public
      * @param text {string}
-     * @param source {'english' | 'french'}
+     * @param source {'english' | 'french' | 'italian' | 'spanish'}
      * @param cb {function}
-     * @returns {Promise<{ok: boolean, message: string}|{ ok: boolean, data: string, sentences: any[], stats: any[], corrections: { id: number, text: string, type: string, explanation: string, corrected: string, suggestions: string}[]}>}
+     * @returns {Promise<{ok: boolean, message: string}|{ ok: boolean, text: string, sentences: any[], stats: any[], corrections: { id: number, text: string, type: string, explanation: string, corrected: string, suggestions: string}[]}>}
      */
     async getSpellCheck(text, source = SupportedLanguages.ENGLISH, cb = null) {
         source = source.toLowerCase()
@@ -186,6 +186,8 @@ module.exports = class Reverso {
         const languages = {
             english: 'eng',
             french: 'fra',
+            italian: 'ita',
+            spanish: 'spa'
         }
 
         const data = await this.#request({
@@ -237,7 +239,7 @@ module.exports = class Reverso {
      * Get synonyms of the query.
      * @public
      * @param text {string}
-     * @param source {'english' | 'russian' | 'german' | 'spanish' | 'french' | 'polish' | 'italian'}
+     * @param source {'english' | 'russian' | 'german' | 'spanish' | 'french' | 'polish' | 'italian' | 'arabic' | 'hebrew' | 'japanese' | 'dutch' | 'portugese' | 'romanian'}
      * @param cb {function}
      * @returns {Promise<{ok: boolean, message: string}|{synonyms: { id: number, synonym: string }[], text, source: string}>}
      */
@@ -270,6 +272,12 @@ module.exports = class Reverso {
             italian: 'it',
             polish: 'pl',
             spanish: 'es',
+            arabic: 'ar',
+            hebrew: 'he',
+            japanese: 'ja',
+            dutch: 'nl',
+            portugese: 'pt',
+            romanian: 'ro'
         }
 
         const data = await this.#request({

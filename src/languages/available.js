@@ -16,7 +16,12 @@ const available = {
         'chinese',
         'english',
     ],
-    spell: ['english', 'french'],
+    spell: [
+        'english', 
+        'french',
+        'italian',
+        'spanish',
+    ],
     synonyms: [
         'english',
         'russian',
@@ -25,6 +30,12 @@ const available = {
         'french',
         'polish',
         'italian',
+        'arabic',
+        'hebrew',
+        'japanese',
+        'dutch',
+        'portugese',
+        'romanian',
     ],
     translation: [
         'arabic',
