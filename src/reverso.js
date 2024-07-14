@@ -1,23 +1,10 @@
-const axios = require('axios')
 const { getRandom } = require('random-useragent')
 const { load } = require('cheerio')
 
-const available = require('./languages/available.js')
-const compatibility = require('./languages/compatibility.js')
-const SupportedLanguages = require('./entities/languages.js')
-
-axios.interceptors.request.use(
-    (config) => {
-        config.headers['Accept'] = '*/*'
-        config.headers['Connection'] = 'keep-alive'
-        config.headers['User-Agent'] = getRandom()
-
-        return config
-    },
-    (error) => {
-        return Promise.reject(error)
-    }
-)
+const available = require('./utils/languages/available.js')
+const compatibility = require('./utils/languages/compatibility.js')
+const SupportedLanguages = require('./enums/languages.js')
+const transformResponse = require('./utils/transform-response')
 
 module.exports = class Reverso {
     /** @private */
@@ -33,17 +20,6 @@ module.exports = class Reverso {
         'https://voice.reverso.net/RestPronunciation.svc/v1/output=json/GetVoiceStream/'
     /** @private */
     CONJUGATION_URL = 'https://conjugator.reverso.net/conjugation-'
-
-    /**
-     * @private
-     * Whether to use the insecure HTTP parser in Axios.
-     *
-     * This HTTP parser accepts certain headers that do not strictly follow the specification in
-     * https://datatracker.ietf.org/doc/html/rfc2616#section-4.1. The Reverso API occasionally
-     * returns headers that do not end with CRLF. Enable this to support accept these malformed
-     * responses. See https://github.com/axios/axios#request-config
-     */
-    insecureHTTPParser = false
 
     /**
      * @public
@@ -470,6 +446,12 @@ module.exports = class Reverso {
         return result
     }
 
+    /**
+     * @param text
+     * @param source
+     * @param cb
+     * @returns {Promise<{ok: boolean, message}|{verbForms: *[], infinitive: (*|jQuery|string), ok: boolean}|{ok: boolean, message: string}>}
+     */
     async getConjugation(text, source = SupportedLanguages.ENGLISH, cb = null) {
         source = source.toLowerCase()
 
@@ -554,12 +536,22 @@ module.exports = class Reverso {
      * @returns {Promise<any>}
      */
     async #request(config) {
-        try {
-            const { data } = await axios({
-                insecureHTTPParser: this.insecureHTTPParser,
-                ...config,
-            })
+        const headers = {
+            Accept: '*/*',
+            Connection: 'keep-alive',
+            'User-Agent': getRandom(),
+            ...config.headers,
+        }
 
+        const requestOptions = {
+            method: config.method,
+            headers,
+            body: config.data ? JSON.stringify(config.data) : undefined,
+        }
+
+        try {
+            const response = await fetch(config.url, requestOptions)
+            const data = await transformResponse(response)
             return { success: true, data }
         } catch (error) {
             return { success: false, error }
