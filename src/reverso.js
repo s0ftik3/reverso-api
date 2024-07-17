@@ -514,7 +514,7 @@ module.exports = class Reverso {
             verbForms.push({
                 id: i,
                 conjugation: header,
-                verbs: [...new Set(data)],
+                verbs: data,
             })
         })
 
