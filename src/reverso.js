@@ -386,9 +386,9 @@ module.exports = class Reverso {
         })
         if (!response.success) return this.#handleError(response.error, cb)
 
-        const translationEncoded = Buffer.from(
+        const translationEncoded = typeof Buffer !== 'undefined' ? Buffer.from(
             response.data.translation[0]
-        ).toString('base64')
+        ).toString('base64') : btoa(response.data.translation[0])
 
         const result = {
             ok: true,
