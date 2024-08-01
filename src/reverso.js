@@ -5,6 +5,7 @@ const available = require('./utils/languages/available.js')
 const compatibility = require('./utils/languages/compatibility.js')
 const SupportedLanguages = require('./enums/languages.js')
 const transformResponse = require('./utils/transform-response')
+const toBase64 = require('./utils/to-base64')
 
 module.exports = class Reverso {
     /** @private */
@@ -386,9 +387,7 @@ module.exports = class Reverso {
         })
         if (!response.success) return this.#handleError(response.error, cb)
 
-        const translationEncoded = Buffer.from(
-            response.data.translation[0]
-        ).toString('base64')
+        const translationEncoded = toBase64(response.data.translation[0])
 
         const result = {
             ok: true,
