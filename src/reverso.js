@@ -407,6 +407,9 @@ module.exports = class Reverso {
                 voices[target] && response.data.translation[0].length <= 150
                     ? `${this.VOICE_URL}voiceName=${voices[target]}?inputText=${translationEncoded}`
                     : null,
+            sourceVoice: voices[source] && text.length <= 150
+                    ? `${this.VOICE_URL}voiceName=${voices[target]}?inputText=${toBase64(text)}`
+                    : null,
         }
 
         if (response.data.contextResults?.results) {
