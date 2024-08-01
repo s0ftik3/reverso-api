@@ -228,7 +228,8 @@ Response:
         rude: Boolean
     }, // or null
     detected_language: String,
-    voice: String // or null
+    voice: String, // or null
+    sourceVoice: String // or null
 }
 ```
 
