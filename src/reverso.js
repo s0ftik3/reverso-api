@@ -49,10 +49,10 @@ module.exports = class Reverso {
         target = target.toLowerCase()
 
         if (cb && typeof cb !== 'function') {
-            return {
+            this.#handleError({
                 ok: false,
                 message: 'getContext: cb parameter must be type of function',
-            }
+            }, cb)
         }
 
         if (
@@ -65,9 +65,7 @@ module.exports = class Reverso {
                 message: 'getContext: invalid language passed to the method',
             }
 
-            if (cb) cb(error)
-
-            return error
+            this.#handleError(error, cb)
         }
 
         const response = await this.#request({
@@ -78,7 +76,7 @@ module.exports = class Reverso {
                 '/' +
                 encodeURIComponent(text).replace(/%20/g, '+'),
         })
-        if (!response.success) return this.#handleError(response.error, cb)
+        if (!response.success) {this.#handleError(response.error, cb)}
 
         const $ = load(response.data)
         const sourceDirection =
@@ -144,10 +142,10 @@ module.exports = class Reverso {
         source = source.toLowerCase()
 
         if (cb && typeof cb !== 'function') {
-            return {
+            this.#handleError({
                 ok: false,
                 message: 'getSpellCheck: cb parameter must be type of function',
-            }
+            }, cb)
         }
 
         if (!available.spell.find((e) => e === source)) {
@@ -156,9 +154,7 @@ module.exports = class Reverso {
                 message: 'getSpellCheck: invalid language passed to the method',
             }
 
-            if (cb) cb(error)
-
-            return error
+            this.#handleError(error, cb)
         }
 
         const languages = {
@@ -181,13 +177,14 @@ module.exports = class Reverso {
                 text,
             },
         })
-        if (!response.success || !Object.keys(response.data).length)
-            return this.#handleError(
+        if (!response.success || !Object.keys(response.data).length) {
+            this.#handleError(
                 {
                     message: 'No result',
                 },
                 cb
             )
+        }
 
         const result = {
             ok: true,
@@ -221,10 +218,10 @@ module.exports = class Reverso {
         source = source.toLowerCase()
 
         if (cb && typeof cb !== 'function') {
-            return {
+            this.#handleError({
                 ok: false,
                 message: 'getSynonyms: cb parameter must be type of function',
-            }
+            }, cb)
         }
 
         if (!available.synonyms.find((e) => e === source)) {
@@ -233,9 +230,7 @@ module.exports = class Reverso {
                 message: 'getSynonyms: invalid language passed to the method',
             }
 
-            if (cb) cb(error)
-
-            return error
+            this.#handleError(error, cb)
         }
 
         const languages = {
@@ -262,7 +257,7 @@ module.exports = class Reverso {
                 '/' +
                 encodeURIComponent(text),
         })
-        if (!response.success) return this.#handleError(response.error, cb)
+        if (!response.success) {this.#handleError(response.error, cb)}
 
         const $ = load(response.data)
 
@@ -306,11 +301,11 @@ module.exports = class Reverso {
         target = target.toLowerCase()
 
         if (cb && typeof cb !== 'function') {
-            return {
+            this.#handleError({
                 ok: false,
                 message:
                     'getTranslation: cb parameter must be type of function',
-            }
+            }, cb)
         }
 
         if (
@@ -324,9 +319,7 @@ module.exports = class Reverso {
                     'getTranslation: invalid language passed to the method',
             }
 
-            if (cb) cb(error)
-
-            return error
+            this.#handleError(error, cb)
         }
 
         const languages = {
@@ -385,7 +378,7 @@ module.exports = class Reverso {
                 to: languages[target],
             },
         })
-        if (!response.success) return this.#handleError(response.error, cb)
+        if (!response.success) {this.#handleError(response.error, cb)}
 
         const translationEncoded = toBase64(response.data.translation[0])
 
@@ -455,11 +448,11 @@ module.exports = class Reverso {
         source = source.toLowerCase()
 
         if (cb && typeof cb !== 'function') {
-            return {
+            this.#handleError({
                 ok: false,
                 message:
                     'getConjugation: cb parameter must be type of function',
-            }
+            }, cb)
         }
 
         if (!available.conjugation.find((e) => e === source)) {
@@ -469,9 +462,7 @@ module.exports = class Reverso {
                     'getConjugation: invalid language passed to the method',
             }
 
-            if (cb) cb(error)
-
-            return error
+            this.#handleError(error, cb)
         }
 
         const response = await this.#request({
@@ -483,7 +474,7 @@ module.exports = class Reverso {
                 encodeURIComponent(text) +
                 '.html',
         })
-        if (!response.success) return this.#handleError(response.error, cb)
+        if (!response.success) {this.#handleError(response.error, cb)}
 
         const $ = load(response.data)
 
@@ -560,7 +551,7 @@ module.exports = class Reverso {
     /**
      * @param error
      * @param cb
-     * @returns {{ok: boolean, message}}
+     * @throws
      */
     #handleError(error, cb) {
         error = {
@@ -569,6 +560,6 @@ module.exports = class Reverso {
         }
 
         if (cb) cb(error)
-        return error
+        throw new Error(error.message);
     }
 }
