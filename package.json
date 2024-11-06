@@ -1,6 +1,6 @@
 {
     "name": "reverso-api",
-    "version": "2.22.9",
+    "version": "2.22.10",
     "description": "Unofficial Reverso API",
     "main": "index.js",
     "homepage": "https://github.com/s0ftik3/reverso-api#readme",
